@@ -109,6 +109,7 @@ UnityIndirect CreateIndirectLight (Interpolators i) {
 
 	#if defined(FORWARD_BASE_PASS)
 		indirectLight.diffuse += max(0, ShadeSH9(float4(i.normal, 1)));
+		indirectLight.specular = float3(1, 0, 0);
 	#endif
 
 	return indirectLight;
