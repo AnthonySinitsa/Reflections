@@ -14,13 +14,19 @@ public class MyLightingShaderGUI : ShaderGUI{
         DoMain();
     }
 
-    void DoMain(){
-        GUILayout.Label("Main Maps", EditorStyles.boldLabel);
+    void DoMain () {
+		GUILayout.Label("Main Maps", EditorStyles.boldLabel);
 
-        MaterialProperty mainTex = FindProperty("_MainTex", properties);
-        GUIContent albedoLabel = new GUIContent(mainTex.displayName, "Albedo (RGB)");
-        MaterialProperty tint = FindProperty("_Tint", properties);
-        editor.TexturePropertySingleLine(albedoLabel, mainTex, tint);
-        editor.TextureScaleOffsetProperty(mainTex);
+		MaterialProperty mainTex = FindProperty("_MainTex");
+		GUIContent albedoLabel =
+			new GUIContent(mainTex.displayName, "Albedo (RGB)");
+		editor.TexturePropertySingleLine(
+			albedoLabel, mainTex, FindProperty("_Tint")
+		);
+		editor.TextureScaleOffsetProperty(mainTex);
+	}
+
+    MaterialProperty FindProperty(string name){
+        return FindProperty(name, properties);
     }
 }
