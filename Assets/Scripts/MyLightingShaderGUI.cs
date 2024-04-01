@@ -1,18 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
-public class MyLightingShaderGUI : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+public class MyLightingShaderGUI : ShaderGUI{
 
-    // Update is called once per frame
-    void Update()
-    {
+    public override void OnGUI(
+        MaterialEditor materialEditor, MaterialProperty[] properties
+    ){
         
     }
 }
