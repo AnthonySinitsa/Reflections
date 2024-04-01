@@ -18,10 +18,8 @@ public class MyLightingShaderGUI : ShaderGUI{
 		GUILayout.Label("Main Maps", EditorStyles.boldLabel);
 
 		MaterialProperty mainTex = FindProperty("_MainTex");
-		GUIContent albedoLabel =
-			new GUIContent(mainTex.displayName, "Albedo (RGB)");
 		editor.TexturePropertySingleLine(
-			albedoLabel, mainTex, FindProperty("_Tint")
+			MakeLabel(mainTex, "Albedo (RGB)"), mainTex, FindProperty("_Tint")
 		);
 		editor.TextureScaleOffsetProperty(mainTex);
 	}
@@ -29,4 +27,14 @@ public class MyLightingShaderGUI : ShaderGUI{
     MaterialProperty FindProperty(string name){
         return FindProperty(name, properties);
     }
+
+    static GUIContent staticLabel = new GUIContent();
+	
+	static GUIContent MakeLabel (
+		MaterialProperty property, string tooltip = null
+	) {
+		staticLabel.text = property.displayName;
+		staticLabel.tooltip = tooltip;
+		return staticLabel;
+	}
 }
