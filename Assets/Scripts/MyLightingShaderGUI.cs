@@ -45,7 +45,7 @@ public class MyLightingShaderGUI : ShaderGUI{
 		MaterialProperty map = FindProperty("_MetallicMap");
 		editor.TexturePropertySingleLine(
 			MakeLabel(map, "Metallic (R)"), map,
-			FindProperty("_Metallic")
+			map.textureValue ? null : FindProperty("_Metallic")
 		);
 	}
 
