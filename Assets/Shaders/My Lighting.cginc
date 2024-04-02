@@ -231,6 +231,7 @@ void InitializeFragmentNormal(inout Interpolators i) {
 		UnpackScaleNormal(tex2D(_NormalMap, i.uv.xy), _BumpScale);
 	float3 detailNormal =
 		UnpackScaleNormal(tex2D(_DetailNormalMap, i.uv.zw), _DetailBumpScale);
+	detailNormal = lerp(float3(0, 0, 1), detailNormal, GetDetailMask(i));
 	float3 tangentSpaceNormal = BlendNormals(mainNormal, detailNormal);
 
 	#if defined(BINORMAL_PER_FRAGMENT)

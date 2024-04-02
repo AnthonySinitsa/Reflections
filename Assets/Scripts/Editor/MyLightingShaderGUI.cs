@@ -62,18 +62,6 @@ public class MyLightingShaderGUI : ShaderGUI {
 		}
 	}
 
-	void DoOcclusion () {
-		MaterialProperty map = FindProperty("_OcclusionMap");
-		EditorGUI.BeginChangeCheck();
-		editor.TexturePropertySingleLine(
-			MakeLabel(map, "Occlusion (G)"), map,
-			map.textureValue ? FindProperty("_OcclusionStrength") : null
-		);
-		if (EditorGUI.EndChangeCheck()) {
-			SetKeyword("_OCCLUSION_MAP", map.textureValue);
-		}
-	}
-
 	void DoSmoothness () {
 		SmoothnessSource source = SmoothnessSource.Uniform;
 		if (IsKeywordEnabled("_SMOOTHNESS_ALBEDO")) {
@@ -100,23 +88,35 @@ public class MyLightingShaderGUI : ShaderGUI {
 		EditorGUI.indentLevel -= 3;
 	}
 
+	void DoOcclusion () {
+		MaterialProperty map = FindProperty("_OcclusionMap");
+		EditorGUI.BeginChangeCheck();
+		editor.TexturePropertySingleLine(
+			MakeLabel(map, "Occlusion (G)"), map,
+			map.textureValue ? FindProperty("_OcclusionStrength") : null
+		);
+		if (EditorGUI.EndChangeCheck()) {
+			SetKeyword("_OCCLUSION_MAP", map.textureValue);
+		}
+	}
+
 	void DoEmission () {
 		MaterialProperty map = FindProperty("_EmissionMap");
 		EditorGUI.BeginChangeCheck();
 		editor.TexturePropertyWithHDRColor(
-			MakeLabel("Emission (RGB)"), map, FindProperty("_Emission"),
+			MakeLabel(map, "Emission (RGB)"), map, FindProperty("_Emission"),
 			emissionConfig, false
 		);
 		if (EditorGUI.EndChangeCheck()) {
 			SetKeyword("_EMISSION_MAP", map.textureValue);
 		}
 	}
-	
+
 	void DoDetailMask () {
 		MaterialProperty mask = FindProperty("_DetailMask");
 		EditorGUI.BeginChangeCheck();
 		editor.TexturePropertySingleLine(
-			MakeLabel(map, "Detail Mask (A)"), mask
+			MakeLabel(mask, "Detail Mask (A)"), mask
 		);
 		if (EditorGUI.EndChangeCheck()) {
 			SetKeyword("_DETAIL_MASK", mask.textureValue);
