@@ -21,7 +21,9 @@ public class MyLightingShaderGUI : ShaderGUI{
 		editor.TexturePropertySingleLine(
 			MakeLabel(mainTex, "Albedo (RGB)"), mainTex, FindProperty("_Tint")
 		);
-        DoNormals():
+        DoMetallic();
+        DoSmoothness();
+        DoNormals();
 		editor.TextureScaleOffsetProperty(mainTex);
 	}
 
@@ -37,6 +39,20 @@ public class MyLightingShaderGUI : ShaderGUI{
 		staticLabel.text = property.displayName;
 		staticLabel.tooltip = tooltip;
 		return staticLabel;
+	}
+
+    void DoMetallic () {
+		MaterialProperty slider = FindProperty("_Metallic");
+		EditorGUI.indentLevel += 2;
+		editor.ShaderProperty(slider, MakeLabel(slider));
+		EditorGUI.indentLevel -= 2;
+	}
+
+	void DoSmoothness () {
+		MaterialProperty slider = FindProperty("_Smoothness");
+		EditorGUI.indentLevel += 2;
+		editor.ShaderProperty(slider, MakeLabel(slider));
+		EditorGUI.indentLevel -= 2;
 	}
 
     void DoNormals(){
