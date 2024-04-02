@@ -138,7 +138,7 @@ UnityLight CreateLight (Interpolators i) {
 	#endif
 
 	UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
-	attenuation *= GetOcclusion(i);
+
 	light.color = _LightColor0.rgb * attenuation;
 	light.ndotl = DotClamped(i.normal, light.dir);
 	return light;
@@ -203,6 +203,9 @@ UnityIndirect CreateIndirectLight (Interpolators i, float3 viewDir) {
 		#else
 			indirectLight.specular = probe0;
 		#endif
+		float occlusion = GetOcclusion(i);
+		indirectLight.diffuse *= occlusion;
+		indirectLight.specular *= occlusion;
 	#endif
 
 	return indirectLight;
