@@ -3,12 +3,23 @@ using UnityEditor;
 
 public class MyLightingShaderGUI : ShaderGUI{
 
+    Material target;
     MaterialEditor editor;
     MaterialProperty[] properties;
+
+    void SetKeyword (string keyword, bool state) {
+		if (state) {
+			target.EnableKeyword(keyword);
+		}
+		else {
+			target.DisableKeyword(keyword);
+		}
+	}
 
     public override void OnGUI(
         MaterialEditor materialEditor, MaterialProperty[] properties
     ){
+        this.target = editor.target as Material;
         this.editor = editor;
         this.properties = properties;
         DoMain();
@@ -47,6 +58,7 @@ public class MyLightingShaderGUI : ShaderGUI{
 			MakeLabel(map, "Metallic (R)"), map,
 			map.textureValue ? null : FindProperty("_Metallic")
 		);
+        SetKeyword("_METALLIC_MAP", map.textureValue);
 	}
 
 	void DoSmoothness () {
