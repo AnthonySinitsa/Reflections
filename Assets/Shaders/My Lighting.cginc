@@ -202,7 +202,7 @@ float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
 	float3 specularTint;
 	float oneMinusReflectivity;
 	albedo = DiffuseAndSpecularFromMetallic(
-		albedo, GetMetallic(i), _Metallic, specularTint, oneMinusReflectivity
+		albedo, GetMetallic(i), specularTint, oneMinusReflectivity
 	);
 
 	return UNITY_BRDF_PBS(

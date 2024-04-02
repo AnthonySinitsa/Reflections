@@ -3,14 +3,16 @@ using UnityEditor;
 
 public class MyLightingShaderGUI : ShaderGUI {
 
+	static GUIContent staticLabel = new GUIContent();
+
+	Material target;
 	MaterialEditor editor;
 	MaterialProperty[] properties;
-
-	static GUIContent staticLabel = new GUIContent();
 
 	public override void OnGUI (
 		MaterialEditor editor, MaterialProperty[] properties
 	) {
+		this.target = editor.target as Material;
 		this.editor = editor;
 		this.properties = properties;
 		DoMain();
@@ -39,10 +41,15 @@ public class MyLightingShaderGUI : ShaderGUI {
 	}
 
 	void DoMetallic () {
-		MaterialProperty slider = FindProperty("_Metallic");
-		EditorGUI.indentLevel += 2;
-		editor.ShaderProperty(slider, MakeLabel(slider));
-		EditorGUI.indentLevel -= 2;
+		MaterialProperty map = FindProperty("_MetallicMap");
+		EditorGUI.BeginChangeCheck();
+		editor.TexturePropertySingleLine(
+			MakeLabel(map, "Metallic (R)"), map,
+			map.textureValue ? null : FindProperty("_Metallic")
+		);
+		if (EditorGUI.EndChangeCheck()) {
+			SetKeyword("_METALLIC_MAP", map.textureValue);
+		}
 	}
 
 	void DoSmoothness () {
@@ -87,5 +94,14 @@ public class MyLightingShaderGUI : ShaderGUI {
 		staticLabel.text = property.displayName;
 		staticLabel.tooltip = tooltip;
 		return staticLabel;
+	}
+
+	void SetKeyword (string keyword, bool state) {
+		if (state) {
+			target.EnableKeyword(keyword);
+		}
+		else {
+			target.DisableKeyword(keyword);
+		}
 	}
 }

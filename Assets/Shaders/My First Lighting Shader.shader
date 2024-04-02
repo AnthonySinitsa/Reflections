@@ -60,8 +60,6 @@
 
 			#pragma target 3.0
 
-			#pragma shader_feature _METALLIC_MAP
-
 			#pragma multi_compile_fwdadd_fullshadows
 			
 			#pragma vertex MyVertexProgram
