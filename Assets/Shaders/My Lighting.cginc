@@ -98,6 +98,13 @@ float GetDetailMask (Interpolators i) {
 	#endif
 }
 
+float3 GetAlbedo (Interpolators i) {
+	float3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Tint.rgb;
+	float3 details = tex2D(_DetailTex, i.uv.zw) * unity_ColorSpaceDouble;
+	albedo = lerp(albedo, albedo * details, GetDetailMask(i));
+	return albedo;
+}
+
 void ComputeVertexLightColor (inout Interpolators i) {
 	#if defined(VERTEXLIGHT_ON)
 		i.vertexLightColor = Shade4PointLights(
@@ -244,13 +251,10 @@ float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
 
 	float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
 
-	float3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Tint.rgb;
-	albedo *= tex2D(_DetailTex, i.uv.zw) * unity_ColorSpaceDouble;
-
 	float3 specularTint;
 	float oneMinusReflectivity;
-	albedo = DiffuseAndSpecularFromMetallic(
-		albedo, GetMetallic(i), specularTint, oneMinusReflectivity
+	float3 albedo = DiffuseAndSpecularFromMetallic(
+		GetAlbedo(i), GetMetallic(i), specularTint, oneMinusReflectivity
 	);
 
 	float4 color = UNITY_BRDF_PBS(
