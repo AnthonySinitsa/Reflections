@@ -7,7 +7,7 @@
 #include "AutoLight.cginc"
 
 float4 _Tint;
-sampler2D _MainTex, _DetailTex;
+sampler2D _MainTex, _DetailTex, _DetailMask;
 float4 _MainTex_ST, _DetailTex_ST;
 
 sampler2D _NormalMap, _DetailNormalMap;
@@ -85,6 +85,14 @@ float3 GetEmission (Interpolators i) {
 float GetOcclusion (Interpolators i) {
 	#if defined(_OCCLUSION_MAP)
 		return lerp(1, tex2D(_OcclusionMap, i.uv.xy).g, _OcclusionStrength);
+	#else
+		return 1;
+	#endif
+}
+
+float GetDetailMask (Interpolators i) {
+	#if defined (_DETAIL_MASK)
+		return tex2D(_DetailMask, i.uv.xy).a;
 	#else
 		return 1;
 	#endif
