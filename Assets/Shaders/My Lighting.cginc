@@ -13,6 +13,7 @@ float4 _MainTex_ST, _DetailTex_ST;
 sampler2D _NormalMap, _DetailNormalMap;
 float _BumpScale, _DetailBumpScale;
 
+sampler2D _MetallicMap;
 float _Metallic;
 float _Smoothness;
 
@@ -43,6 +44,10 @@ struct Interpolators {
 		float3 vertexLightColor : TEXCOORD6;
 	#endif
 };
+
+float GetMetallic(Interpolators i){
+	return tex2D(_MetallicMap, i.uv.xy).r * _Metallic;
+}
 
 void ComputeVertexLightColor (inout Interpolators i) {
 	#if defined(VERTEXLIGHT_ON)
@@ -193,7 +198,7 @@ float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
 	float3 specularTint;
 	float oneMinusReflectivity;
 	albedo = DiffuseAndSpecularFromMetallic(
-		albedo, _Metallic, specularTint, oneMinusReflectivity
+		albedo, GetMetallic(i), _Metallic, specularTint, oneMinusReflectivity
 	);
 
 	return UNITY_BRDF_PBS(
