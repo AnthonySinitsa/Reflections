@@ -21,6 +21,7 @@ public class MyLightingShaderGUI : ShaderGUI{
 		editor.TexturePropertySingleLine(
 			MakeLabel(mainTex, "Albedo (RGB)"), mainTex, FindProperty("_Tint")
 		);
+        DoNormals():
 		editor.TextureScaleOffsetProperty(mainTex);
 	}
 
@@ -37,4 +38,12 @@ public class MyLightingShaderGUI : ShaderGUI{
 		staticLabel.tooltip = tooltip;
 		return staticLabel;
 	}
+
+    void DoNormals(){
+        MaterialProperty map = FindProperty("_NormalMap");
+        editor.TexturePropertySingleLine(
+			MakeLabel(map), map,
+			map.textureValue ? FindProperty("_BumpScale") : null
+		);
+    }
 }
