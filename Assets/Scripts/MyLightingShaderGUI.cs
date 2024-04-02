@@ -16,6 +16,14 @@ public class MyLightingShaderGUI : ShaderGUI{
 		}
 	}
 
+    enum SmoothnessSource {
+		Uniform, Albedo, Metallic
+	}
+
+    bool IsKeywordEnabled (string keyword) {
+		return target.IsKeywordEnabled(keyword);
+	}
+
     public override void OnGUI(
         MaterialEditor materialEditor, MaterialProperty[] properties
     ){
@@ -65,10 +73,26 @@ public class MyLightingShaderGUI : ShaderGUI{
 	}
 
 	void DoSmoothness () {
+        SmoothnessSource source = SmoothnessSource.Uniform;
+		if (IsKeywordEnabled("_SMOOTHNESS_ALBEDO")) {
+			source = SmoothnessSource.Albedo;
+		}
+		else if (IsKeywordEnabled("_SMOOTHNESS_METALLIC")) {
+			source = SmoothnessSource.Metallic;
+		}
 		MaterialProperty slider = FindProperty("_Smoothness");
 		EditorGUI.indentLevel += 2;
 		editor.ShaderProperty(slider, MakeLabel(slider));
-		EditorGUI.indentLevel -= 2;
+        EditorGUI.indentLevel += 1;
+        EditorGUI.BeginChangeCheck();
+		source = (SmoothnessSource)EditorGUILayout.EnumPopup(MakeLabel("Source"), source);
+        if (EditorGUI.EndChangeCheck()) {
+			SetKeyword("_SMOOTHNESS_ALBEDO", source == SmoothnessSource.Albedo);
+			SetKeyword(
+				"_SMOOTHNESS_METALLIC", source == SmoothnessSource.Metallic
+			);
+		}
+		EditorGUI.indentLevel -= 3;
 	}
 
     void DoNormals(){
