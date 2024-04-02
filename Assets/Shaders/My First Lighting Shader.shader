@@ -14,6 +14,9 @@
 		[NoScaleOffset] _EmissionMap ("Emission", 2D) = "black" {}
 		_Emission ("Emission", Color) = (0, 0, 0)
 
+		[NoScaleOffset] _OcclusionMap ("Occlusion", 2D) = "white" {}
+		_OcclusionStrength("Occlusion Strength", Range(0, 1)) = 1
+
 		_DetailTex ("Detail Albedo", 2D) = "gray" {}
 		[NoScaleOffset] _DetailNormalMap ("Detail Normals", 2D) = "bump" {}
 		_DetailBumpScale ("Detail Bump Scale", Float) = 1
@@ -38,6 +41,7 @@
 
 			#pragma shader_feature _METALLIC_MAP
 			#pragma shader_feature _ _SMOOTHNESS_ALBEDO _SMOOTHNESS_METALLIC
+			#pragma shader_feature _OCCLUSION_MAP
 			#pragma shader_feature _EMISSION_MAP
 
 			#pragma multi_compile _ SHADOWS_SCREEN
