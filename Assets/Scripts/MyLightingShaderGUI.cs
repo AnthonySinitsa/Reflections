@@ -28,11 +28,10 @@ public class MyLightingShaderGUI : ShaderGUI{
 		editor.RegisterPropertyChangeUndo(label);
 	}
 
-    public override void OnGUI(
-        MaterialEditor materialEditor, MaterialProperty[] properties
-    ){
-        this.target = editor.target as Material;
-        this.editor = editor;
+    public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
+    {
+        editor = materialEditor;
+        target = editor.target as Material;
         this.properties = properties;
         DoMain();
     }
@@ -78,27 +77,27 @@ public class MyLightingShaderGUI : ShaderGUI{
 
 	void DoSmoothness () {
         SmoothnessSource source = SmoothnessSource.Uniform;
-		if (IsKeywordEnabled("_SMOOTHNESS_ALBEDO")) {
-			source = SmoothnessSource.Albedo;
-		}
-		else if (IsKeywordEnabled("_SMOOTHNESS_METALLIC")) {
-			source = SmoothnessSource.Metallic;
-		}
-		MaterialProperty slider = FindProperty("_Smoothness");
-		EditorGUI.indentLevel += 2;
-		editor.ShaderProperty(slider, MakeLabel(slider));
+        if (IsKeywordEnabled("_SMOOTHNESS_ALBEDO")) {
+            source = SmoothnessSource.Albedo;
+        }
+        else if (IsKeywordEnabled("_SMOOTHNESS_METALLIC")) {
+            source = SmoothnessSource.Metallic;
+        }
+        MaterialProperty slider = FindProperty("_Smoothness");
+        EditorGUI.indentLevel += 2;
+        editor.ShaderProperty(slider, MakeLabel(slider));
         EditorGUI.indentLevel += 1;
         EditorGUI.BeginChangeCheck();
-		source = (SmoothnessSource)EditorGUILayout.EnumPopup(MakeLabel("Source"), source);
+        source = (SmoothnessSource)EditorGUILayout.EnumPopup(MakeLabel(slider), source); // Change MakeLabel argument here
         if (EditorGUI.EndChangeCheck()) {
             RecordAction("Smoothness Source");
-			SetKeyword("_SMOOTHNESS_ALBEDO", source == SmoothnessSource.Albedo);
-			SetKeyword(
-				"_SMOOTHNESS_METALLIC", source == SmoothnessSource.Metallic
-			);
-		}
-		EditorGUI.indentLevel -= 3;
-	}
+            SetKeyword("_SMOOTHNESS_ALBEDO", source == SmoothnessSource.Albedo);
+            SetKeyword(
+                "_SMOOTHNESS_METALLIC", source == SmoothnessSource.Metallic
+            );
+        }
+        EditorGUI.indentLevel -= 3;
+    }
 
     void DoNormals(){
         MaterialProperty map = FindProperty("_NormalMap");
