@@ -24,6 +24,10 @@ public class MyLightingShaderGUI : ShaderGUI{
 		return target.IsKeywordEnabled(keyword);
 	}
 
+    void RecordAction (string label) {
+		editor.RegisterPropertyChangeUndo(label);
+	}
+
     public override void OnGUI(
         MaterialEditor materialEditor, MaterialProperty[] properties
     ){
@@ -87,6 +91,7 @@ public class MyLightingShaderGUI : ShaderGUI{
         EditorGUI.BeginChangeCheck();
 		source = (SmoothnessSource)EditorGUILayout.EnumPopup(MakeLabel("Source"), source);
         if (EditorGUI.EndChangeCheck()) {
+            RecordAction("Smoothness Source");
 			SetKeyword("_SMOOTHNESS_ALBEDO", source == SmoothnessSource.Albedo);
 			SetKeyword(
 				"_SMOOTHNESS_METALLIC", source == SmoothnessSource.Metallic
