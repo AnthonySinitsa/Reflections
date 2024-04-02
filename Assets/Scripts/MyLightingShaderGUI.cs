@@ -54,11 +54,14 @@ public class MyLightingShaderGUI : ShaderGUI{
 
     void DoMetallic () {
 		MaterialProperty map = FindProperty("_MetallicMap");
+		EditorGUI.BeginChangeCheck();
 		editor.TexturePropertySingleLine(
 			MakeLabel(map, "Metallic (R)"), map,
 			map.textureValue ? null : FindProperty("_Metallic")
 		);
-        SetKeyword("_METALLIC_MAP", map.textureValue);
+		if (EditorGUI.EndChangeCheck()) {
+			SetKeyword("_METALLIC_MAP", map.textureValue);
+		}
 	}
 
 	void DoSmoothness () {
