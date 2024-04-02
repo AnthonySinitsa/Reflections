@@ -45,8 +45,12 @@ struct Interpolators {
 	#endif
 };
 
-float GetMetallic(Interpolators i){
-	return tex2D(_MetallicMap, i.uv.xy).r * _Metallic;
+float GetMetallic (Interpolators i) {
+	#if defined(_METALLIC_MAP)
+		return tex2D(_MetallicMap, i.uv.xy).r;
+	#else
+		return _Metallic;
+	#endif
 }
 
 void ComputeVertexLightColor (inout Interpolators i) {

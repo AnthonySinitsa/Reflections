@@ -33,6 +33,8 @@
 
 			#pragma target 3.0
 
+			#pragma shader_feature _METALLIC_MAP
+
 			#pragma multi_compile _ SHADOWS_SCREEN
 			#pragma multi_compile _ VERTEXLIGHT_ON
 
@@ -57,6 +59,8 @@
 			CGPROGRAM
 
 			#pragma target 3.0
+
+			#pragma shader_feature _METALLIC_MAP
 
 			#pragma multi_compile_fwdadd_fullshadows
 			
