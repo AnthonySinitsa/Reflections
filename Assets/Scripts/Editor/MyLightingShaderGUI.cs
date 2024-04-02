@@ -9,6 +9,9 @@ public class MyLightingShaderGUI : ShaderGUI {
 
 	static GUIContent staticLabel = new GUIContent();
 
+	static ColorPickerHDRConfig emissionConfig =
+		new ColorPickerHDRConfig(0f, 99f, 1f / 99f, 3f);
+
 	Material target;
 	MaterialEditor editor;
 	MaterialProperty[] properties;
@@ -33,6 +36,7 @@ public class MyLightingShaderGUI : ShaderGUI {
 		DoMetallic();
 		DoSmoothness();
 		DoNormals();
+		DoEmission();
 		editor.TextureScaleOffsetProperty(mainTex);
 	}
 
@@ -80,6 +84,18 @@ public class MyLightingShaderGUI : ShaderGUI {
 			);
 		}
 		EditorGUI.indentLevel -= 3;
+	}
+
+	void DoEmission () {
+		MaterialProperty map = FindProperty("_EmissionMap");
+		EditorGUI.BeginChangeCheck();
+		editor.TexturePropertyWithHDRColor(
+			MakeLabel("Emission (RGB)"), map, FindProperty("_Emission"),
+			emissionConfig, false
+		);
+		if (EditorGUI.EndChangeCheck()) {
+			SetKeyword("_EMISSION_MAP", map.textureValue);
+		}
 	}
 
 	void DoSecondary () {
