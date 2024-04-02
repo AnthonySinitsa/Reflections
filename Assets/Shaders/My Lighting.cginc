@@ -15,7 +15,11 @@ float _BumpScale, _DetailBumpScale;
 
 sampler2D _MetallicMap;
 float _Metallic;
+
 float _Smoothness;
+
+sampler2D _OcclusionMap;
+float _OcclusionStrength;
 
 sampler2D _EmissionMap;
 float3 _Emission;
@@ -78,6 +82,14 @@ float3 GetEmission (Interpolators i) {
 	#endif
 }
 
+float GetOcclusion (Interpolators i) {
+	#if defined(_OCCLUSION_MAP)
+		return lerp(1, tex2D(_OcclusionMap, i.uv.xy).g, _OcclusionStrength);
+	#else
+		return 1;
+	#endif
+}
+
 void ComputeVertexLightColor (inout Interpolators i) {
 	#if defined(VERTEXLIGHT_ON)
 		i.vertexLightColor = Shade4PointLights(
@@ -126,7 +138,7 @@ UnityLight CreateLight (Interpolators i) {
 	#endif
 
 	UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
-
+	attenuation *= GetOcclusion(i);
 	light.color = _LightColor0.rgb * attenuation;
 	light.ndotl = DotClamped(i.normal, light.dir);
 	return light;
