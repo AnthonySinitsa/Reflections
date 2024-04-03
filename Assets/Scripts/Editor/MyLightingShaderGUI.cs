@@ -57,12 +57,13 @@ public class MyLightingShaderGUI : ShaderGUI {
 
 	void DoMetallic () {
 		MaterialProperty map = FindProperty("_MetallicMap");
+		Texture tex = map.textureValue;
 		EditorGUI.BeginChangeCheck();
 		editor.TexturePropertySingleLine(
 			MakeLabel(map, "Metallic (R)"), map,
-			map.textureValue ? null : FindProperty("_Metallic")
+			tex ? null : FindProperty("_Metallic")
 		);
-		if (EditorGUI.EndChangeCheck()) {
+		if (EditorGUI.EndChangeCheck() && tex != map.textureValue) {
 			SetKeyword("_METALLIC_MAP", map.textureValue);
 		}
 	}
@@ -95,24 +96,26 @@ public class MyLightingShaderGUI : ShaderGUI {
 
 	void DoOcclusion () {
 		MaterialProperty map = FindProperty("_OcclusionMap");
+		Texture tex = map.textureValue;
 		EditorGUI.BeginChangeCheck();
 		editor.TexturePropertySingleLine(
 			MakeLabel(map, "Occlusion (G)"), map,
-			map.textureValue ? FindProperty("_OcclusionStrength") : null
+			tex ? FindProperty("_OcclusionStrength") : null
 		);
-		if (EditorGUI.EndChangeCheck()) {
+		if (EditorGUI.EndChangeCheck() && tex != map.textureValue) {
 			SetKeyword("_OCCLUSION_MAP", map.textureValue);
 		}
 	}
 
 	void DoEmission () {
 		MaterialProperty map = FindProperty("_EmissionMap");
+		Texture tex = map.textureValue;
 		EditorGUI.BeginChangeCheck();
 		editor.TexturePropertyWithHDRColor(
 			MakeLabel(map, "Emission (RGB)"), map, FindProperty("_Emission"),
 			emissionConfig, false
 		);
-		if (EditorGUI.EndChangeCheck()) {
+		if (EditorGUI.EndChangeCheck() && tex != map.textureValue) {
 			SetKeyword("_EMISSION_MAP", map.textureValue);
 		}
 	}
@@ -145,12 +148,13 @@ public class MyLightingShaderGUI : ShaderGUI {
 
 	void DoSecondaryNormals () {
 		MaterialProperty map = FindProperty("_DetailNormalMap");
+		Texture tex = map.textureValue;
 		EditorGUI.BeginChangeCheck();
 		editor.TexturePropertySingleLine(
 			MakeLabel(map), map,
-			map.textureValue ? FindProperty("_DetailBumpScale") : null
+			tex ? FindProperty("_DetailBumpScale") : null
 		);
-		if (EditorGUI.EndChangeCheck()) {
+		if (EditorGUI.EndChangeCheck() && tex != map.textureValue) {
 			SetKeyword("_DETAIL_NORMAL_MAP", map.textureValue);
 		}
 	}
