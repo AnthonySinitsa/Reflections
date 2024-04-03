@@ -44,12 +44,13 @@ public class MyLightingShaderGUI : ShaderGUI {
 
 	void DoNormals () {
 		MaterialProperty map = FindProperty("_NormalMap");
+		Texture tex = map.textureValue;
 		EditorGUI.BeginChangeCheck();
 		editor.TexturePropertySingleLine(
 			MakeLabel(map), map,
-			map.textureValue ? FindProperty("_BumpScale") : null
+			tex ? FindProperty("_BumpScale") : null
 		);
-		if (EditorGUI.EndChangeCheck()) {
+		if (EditorGUI.EndChangeCheck() && tex != map.textureValue) {
 			SetKeyword("_NORMAL_MAP", map.textureValue);
 		}
 	}
@@ -174,10 +175,14 @@ public class MyLightingShaderGUI : ShaderGUI {
 
 	void SetKeyword (string keyword, bool state) {
 		if (state) {
-			target.EnableKeyword(keyword);
+			foreach (Material m in editor.targets) {
+				m.EnableKeyword(keyword);
+			}
 		}
 		else {
-			target.DisableKeyword(keyword);
+			foreach (Material m in editor.targets) {
+				m.DisableKeyword(keyword);
+			}
 		}
 	}
 
