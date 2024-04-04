@@ -284,6 +284,9 @@ float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
 	float3 albedo = DiffuseAndSpecularFromMetallic(
 		GetAlbedo(i), GetMetallic(i), specularTint, oneMinusReflectivity
 	);
+	#if defined(_RENDERING_TRANSPARENT)
+		albedo *= alpha;
+	#endif
 
 	float4 color = UNITY_BRDF_PBS(
 		albedo, specularTint,
