@@ -51,6 +51,17 @@ struct Interpolators {
 	#endif
 };
 
+struct FragmentOutput {
+	#if defined(DEFERRED_PASS)
+		float4 gBuffer0 : SV_Target0;
+		float4 gBuffer1 : SV_Target1;
+		float4 gBuffer2 : SV_Target2;
+		float4 gBuffer3 : SV_Target3;
+	#else
+		float4 color : SV_Target;
+	#endif
+};
+
 float GetDetailMask (Interpolators i) {
 	#if defined (_DETAIL_MASK)
 		return tex2D(_DetailMask, i.uv.xy).a;
@@ -267,7 +278,7 @@ void InitializeFragmentNormal(inout Interpolators i) {
 	);
 }
 
-float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
+FragmentOutput MyFragmentProgram (Interpolators i) {
 	float alpha = GetAlpha(i);
 	#if defined(_RENDERING_CUTOUT)
 		clip(alpha - _AlphaCutoff);
@@ -297,7 +308,14 @@ float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
 	#if defined(_RENDERING_FADE) || defined(_RENDERING_TRANSPARENT)
 		color.a = alpha;
 	#endif
-	return color;
+	FragmentOutput output;
+	#if defined(DEFERRED_PASS)
+		output.gBuffer0.rgb = albedo;
+		output.gBuffer0.a = GetOcclusion(i);
+	#else
+		output.color = color;
+	#endif
+	return output;
 }
 
 #endif
