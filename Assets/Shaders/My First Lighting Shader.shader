@@ -21,6 +21,8 @@
 		_DetailTex ("Detail Albedo", 2D) = "gray" {}
 		[NoScaleOffset] _DetailNormalMap ("Detail Normals", 2D) = "bump" {}
 		_DetailBumpScale ("Detail Bump Scale", Float) = 1
+
+		_AlphaCutOff ("Alpha Cutoff", Range(0, 1)) = 0.5
 	}
 
 	CGINCLUDE

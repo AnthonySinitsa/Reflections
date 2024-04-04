@@ -39,6 +39,7 @@ public class MyLightingShaderGUI : ShaderGUI {
 		DoOcclusion();
 		DoEmission();
 		DoDetailMask();
+		DoAlphaCutOff();
 		editor.TextureScaleOffsetProperty(mainTex);
 	}
 
@@ -157,6 +158,13 @@ public class MyLightingShaderGUI : ShaderGUI {
 		if (EditorGUI.EndChangeCheck() && tex != map.textureValue) {
 			SetKeyword("_DETAIL_NORMAL_MAP", map.textureValue);
 		}
+	}
+
+	void DoAlphaCutoff () {
+		MaterialProperty slider = FindProperty("_AlphaCutoff");
+		EditorGUI.indentLevel += 2;
+		editor.ShaderProperty(slider, MakeLabel(slider));
+		EditorGUI.indentLevel -= 2;
 	}
 
 	MaterialProperty FindProperty (string name) {
