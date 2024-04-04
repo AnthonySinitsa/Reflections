@@ -16,25 +16,29 @@ public class MyLightingShaderGUI : ShaderGUI {
 		public RenderQueue queue;
 		public string renderType;
 		public BlendMode srcBlend, dstBlend;
+		public bool zWrite;
 
 		public static RenderingSettings[] modes = {
 			new RenderingSettings() {
 				queue = RenderQueue.Geometry,
 				renderType = "",
 				srcBlend = BlendMode.One,
-				dstBlend = BlendMode.Zero
+				dstBlend = BlendMode.Zero,
+				zWrite = true
 			},
 			new RenderingSettings() {
 				queue = RenderQueue.AlphaTest,
 				renderType = "TransparentCutout",
 				srcBlend = BlendMode.One,
-				dstBlend = BlendMode.Zero
+				dstBlend = BlendMode.Zero,
+				zWrite = true
 			},
 			new RenderingSettings() {
 				queue = RenderQueue.Transparent,
 				renderType = "Transparent",
 				srcBlend = BlendMode.SrcAlpha,
-				dstBlend = BlendMode.OneMinusSrcAlpha
+				dstBlend = BlendMode.OneMinusSrcAlpha,
+				zWrite = false
 			}
 		};
 	}
@@ -86,6 +90,7 @@ public class MyLightingShaderGUI : ShaderGUI {
 				m.SetOverrideTag("RenderType", settings.renderType);
 				m.SetInt("_SrcBlend", (int)settings.srcBlend);
 				m.SetInt("_DstBlend", (int)settings.dstBlend);
+				m.SetInt("_ZWrite", settings.zWrite ? 1 : 0);
 			}
 		}
 	}
