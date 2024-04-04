@@ -225,7 +225,7 @@ UnityIndirect CreateIndirectLight (Interpolators i, float3 viewDir) {
 		indirectLight.diffuse = i.vertexLightColor;
 	#endif
 
-	#if defined(FORWARD_BASE_PASS)
+	#if defined(FORWARD_BASE_PASS) || defined(DEFERRED_PASS)
 		indirectLight.diffuse += max(0, ShadeSH9(float4(i.normal, 1)));
 		float3 reflectionDir = reflect(-viewDir, i.normal);
 		Unity_GlossyEnvironmentData envData;
