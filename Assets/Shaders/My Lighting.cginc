@@ -292,6 +292,9 @@ float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
 		CreateLight(i), CreateIndirectLight(i, viewDir)
 	);
 	color.rgb += GetEmission(i);
+	#if defined(_RENDERING_FADE)
+		color.a = alpha;
+	#endif
 	return color;
 }
 
