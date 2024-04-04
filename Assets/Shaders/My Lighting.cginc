@@ -23,7 +23,7 @@ float _OcclusionStrength;
 sampler2D _EmissionMap;
 float3 _Emission;
 
-float _AlphaCutOff;
+float _AlphaCutoff;
 
 struct VertexData {
 	float4 vertex : POSITION;
@@ -271,7 +271,9 @@ void InitializeFragmentNormal(inout Interpolators i) {
 
 float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
 	float alpha = GetAlpha(i);
-	clip(alpha - _AlphaCutOff);
+	#if defined(_RENDERING_CUTOUT)
+		clip(alpha - _AlphaCutoff);
+	#endif
 
 	InitializeFragmentNormal(i);
 

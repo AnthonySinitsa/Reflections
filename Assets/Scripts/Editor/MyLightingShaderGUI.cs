@@ -7,6 +7,10 @@ public class MyLightingShaderGUI : ShaderGUI {
 		Uniform, Albedo, Metallic
 	}
 
+	enum RenderingMode {
+		Opaque, Cutout
+	}
+
 	static GUIContent staticLabel = new GUIContent();
 
 	static ColorPickerHDRConfig emissionConfig =
@@ -22,8 +26,29 @@ public class MyLightingShaderGUI : ShaderGUI {
 		this.target = editor.target as Material;
 		this.editor = editor;
 		this.properties = properties;
+		DoRenderingMode();
 		DoMain();
 		DoSecondary();
+	}
+
+	bool shouldShowAlphaCutoff;
+
+	void DoRenderingMode () {
+		RenderingMode mode = RenderingMode.Opaque;
+		shouldShowAlphaCutoff = false;
+		if (IsKeywordEnabled("_RENDERING_CUTOUT")) {
+			mode = RenderingMode.Cutout;
+			shouldShowAlphaCutoff = true;
+		}
+
+		EditorGUI.BeginChangeCheck();
+		mode = (RenderingMode)EditorGUILayout.EnumPopup(
+			MakeLabel("Rendering Mode"), mode
+		);
+		if (EditorGUI.EndChangeCheck()) {
+			RecordAction("Rendering Mode");
+			SetKeyword("_RENDERING_CUTOUT", mode == RenderingMode.Cutout);
+		}
 	}
 
 	void DoMain () {
@@ -33,13 +58,15 @@ public class MyLightingShaderGUI : ShaderGUI {
 		editor.TexturePropertySingleLine(
 			MakeLabel(mainTex, "Albedo (RGB)"), mainTex, FindProperty("_Tint")
 		);
+		if(shouldShowAlphaCutoff){
+			DoAlphaCutoff();
+		}
 		DoMetallic();
 		DoSmoothness();
 		DoNormals();
 		DoOcclusion();
 		DoEmission();
 		DoDetailMask();
-		DoAlphaCutOff();
 		editor.TextureScaleOffsetProperty(mainTex);
 	}
 

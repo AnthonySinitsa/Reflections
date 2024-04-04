@@ -22,7 +22,7 @@
 		[NoScaleOffset] _DetailNormalMap ("Detail Normals", 2D) = "bump" {}
 		_DetailBumpScale ("Detail Bump Scale", Float) = 1
 
-		_AlphaCutOff ("Alpha Cutoff", Range(0, 1)) = 0.5
+		_AlphaCutoff ("Alpha Cutoff", Range(0, 1)) = 0.5
 	}
 
 	CGINCLUDE
@@ -42,6 +42,7 @@
 
 			#pragma target 3.0
 
+			#pragma shader_feature _RENDERING_CUTOUT
 			#pragma shader_feature _METALLIC_MAP
 			#pragma shader_feature _ _SMOOTHNESS_ALBEDO _SMOOTHNESS_METALLIC
 			#pragma shader_feature _NORMAL_MAP
@@ -76,6 +77,7 @@
 
 			#pragma target 3.0
 
+			#pragma shader_feature _RENDERING_CUTOUT
 			#pragma shader_feature _METALLIC_MAP
 			#pragma shader_feature _ _SMOOTHNESS_ALBEDO _SMOOTHNESS_METALLIC
 			#pragma shader_feature _NORMAL_MAP
