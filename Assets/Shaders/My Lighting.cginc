@@ -312,6 +312,8 @@ FragmentOutput MyFragmentProgram (Interpolators i) {
 	#if defined(DEFERRED_PASS)
 		output.gBuffer0.rgb = albedo;
 		output.gBuffer0.a = GetOcclusion(i);
+		output.gBuffer1.rgb = specularTint;
+		output.gBuffer1.a = GetSmoothness(i);
 	#else
 		output.color = color;
 	#endif
