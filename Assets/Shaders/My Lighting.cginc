@@ -286,6 +286,7 @@ float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
 	);
 	#if defined(_RENDERING_TRANSPARENT)
 		albedo *= alpha;
+		alpha = 1 - oneMinusReflectivity + alpha * oneMinusReflectivity;
 	#endif
 
 	float4 color = UNITY_BRDF_PBS(
