@@ -265,6 +265,9 @@ public class MyLightingShaderGUI : ShaderGUI {
 		if (EditorGUI.EndChangeCheck()) {
 			SetKeyword("_SEMITRANSPARENT_SHADOWS", semitransparentShadows);
 		}
+		if (!semitransparentShadows) {
+			shouldShowAlphaCutoff = true;
+		}
 	}
 
 	MaterialProperty FindProperty (string name) {
