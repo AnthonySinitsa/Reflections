@@ -12,6 +12,26 @@ public class MyLightingShaderGUI : ShaderGUI {
 		Opaque, Cutout, Fade
 	}
 
+	struct RenderingSettings {
+		public RenderQueue queue;
+		public string renderType;
+
+		public static RenderingSettings[] modes = {
+			new RenderingSettings() {
+				queue = RenderQueue.Geometry,
+				renderType = ""
+			},
+			new RenderingSettings() {
+				queue = RenderQueue.AlphaTest,
+				renderType = "TransparentCutout"
+			},
+			new RenderingSettings() {
+				queue = RenderQueue.Transparent,
+				renderType = "Transparent"
+			}
+		};
+	}
+
 	static GUIContent staticLabel = new GUIContent();
 
 	static ColorPickerHDRConfig emissionConfig =
@@ -53,13 +73,10 @@ public class MyLightingShaderGUI : ShaderGUI {
 			SetKeyword("_RENDERING_CUTOUT", mode == RenderingMode.Cutout);
 			SetKeyword("_RENDERING_FADE", mode == RenderingMode.Fade);
 
-			RenderQueue queue = mode == RenderingMode.Opaque ?
-				RenderQueue.Geometry : RenderQueue.AlphaTest;
-			string renderType = mode == RenderingMode.Opaque ?
-				"" : "TransparentCutout";
+			RenderingSettings settings = RenderingSettings.modes[(int)mode];
 			foreach (Material m in editor.targets) {
-				m.renderQueue = (int)queue;
-				m.SetOverrideTag("RenderType", renderType);
+				m.renderQueue = (int)settings.queue;
+				m.SetOverrideTag("RenderType", settings.renderType);
 			}
 		}
 	}
