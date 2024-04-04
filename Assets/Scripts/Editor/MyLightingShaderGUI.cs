@@ -20,6 +20,7 @@ public class MyLightingShaderGUI : ShaderGUI {
 	Material target;
 	MaterialEditor editor;
 	MaterialProperty[] properties;
+	bool shouldShowAlphaCutoff;
 
 	public override void OnGUI (
 		MaterialEditor editor, MaterialProperty[] properties
@@ -31,8 +32,6 @@ public class MyLightingShaderGUI : ShaderGUI {
 		DoMain();
 		DoSecondary();
 	}
-
-	bool shouldShowAlphaCutoff;
 
 	void DoRenderingMode () {
 		RenderingMode mode = RenderingMode.Opaque;
@@ -68,7 +67,8 @@ public class MyLightingShaderGUI : ShaderGUI {
 		editor.TexturePropertySingleLine(
 			MakeLabel(mainTex, "Albedo (RGB)"), mainTex, FindProperty("_Tint")
 		);
-		if(shouldShowAlphaCutoff){
+
+		if (shouldShowAlphaCutoff) {
 			DoAlphaCutoff();
 		}
 		DoMetallic();
@@ -78,6 +78,13 @@ public class MyLightingShaderGUI : ShaderGUI {
 		DoEmission();
 		DoDetailMask();
 		editor.TextureScaleOffsetProperty(mainTex);
+	}
+
+	void DoAlphaCutoff () {
+		MaterialProperty slider = FindProperty("_AlphaCutoff");
+		EditorGUI.indentLevel += 2;
+		editor.ShaderProperty(slider, MakeLabel(slider));
+		EditorGUI.indentLevel -= 2;
 	}
 
 	void DoNormals () {
@@ -195,13 +202,6 @@ public class MyLightingShaderGUI : ShaderGUI {
 		if (EditorGUI.EndChangeCheck() && tex != map.textureValue) {
 			SetKeyword("_DETAIL_NORMAL_MAP", map.textureValue);
 		}
-	}
-
-	void DoAlphaCutoff () {
-		MaterialProperty slider = FindProperty("_AlphaCutoff");
-		EditorGUI.indentLevel += 2;
-		editor.ShaderProperty(slider, MakeLabel(slider));
-		EditorGUI.indentLevel -= 2;
 	}
 
 	MaterialProperty FindProperty (string name) {

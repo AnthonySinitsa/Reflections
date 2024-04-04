@@ -70,6 +70,14 @@ float3 GetAlbedo (Interpolators i) {
 	return albedo;
 }
 
+float GetAlpha (Interpolators i) {
+	float alpha = _Tint.a;
+	#if !defined(_SMOOTHNESS_ALBEDO)
+		alpha *= tex2D(_MainTex, i.uv.xy).a;
+	#endif
+	return alpha;
+}
+
 float3 GetTangentSpaceNormal (Interpolators i) {
 	float3 normal = float3(0, 0, 1);
 	#if defined(_NORMAL_MAP)
@@ -122,14 +130,6 @@ float3 GetEmission (Interpolators i) {
 	#else
 		return 0;
 	#endif
-}
-
-float GetAlpha (Interpolators i) {
-	float alpha = _Tint.a;
-	#if !defined(_SMOOTHNESS_ALBEDO)
-		alpha *= tex2D(_MainTex, i.uv.xy).a;
-	#endif
-	return alpha;
 }
 
 void ComputeVertexLightColor (inout Interpolators i) {
