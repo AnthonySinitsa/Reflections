@@ -3,8 +3,14 @@
 
 #include "UnityCG.cginc"
 
-#if defined(_RENDERING_CUTOUT) && !defined(_SMOOTHNESS_ALBEDO)
-	#define SHADOWS_NEED_UV 1
+#if SHADOWS_SEMITRANSPARENT || defined(_RENDERING_CUTOUT)
+	#if !defined(_SMOOTHNESS_ALBEDO)
+		#define SHADOWS_NEED_UV 1
+	#endif
+#endif
+
+#if defined(_RENDERING_FADE) || defined(_RENDERING_TRANSPARENT)
+	#define SHADOWS_SEMITRANSPARENT 1
 #endif
 
 float4 _Tint;
