@@ -130,7 +130,7 @@ float GetOcclusion (Interpolators i) {
 }
 
 float3 GetEmission (Interpolators i) {
-	#if defined(FORWARD_BASE_PASS)
+	#if defined(FORWARD_BASE_PASS) || defined(DEFERRED_PASS)
 		#if defined(_EMISSION_MAP)
 			return tex2D(_EmissionMap, i.uv.xy) * _Emission;
 		#else
@@ -182,16 +182,21 @@ Interpolators MyVertexProgram (VertexData v) {
 UnityLight CreateLight (Interpolators i) {
 	UnityLight light;
 
-	#if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
-		light.dir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos);
+	#if defined(DEFERRED_PASS)
+		light.dir = float3(0, 1, 0);
+		light.color = 0;
 	#else
-		light.dir = _WorldSpaceLightPos0.xyz;
-	#endif
 
-	UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
-	
-	light.color = _LightColor0.rgb * attenuation;
-	light.ndotl = DotClamped(i.normal, light.dir);
+		#if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
+			light.dir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos);
+		#else
+			light.dir = _WorldSpaceLightPos0.xyz;
+		#endif
+
+		UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
+		
+		light.color = _LightColor0.rgb * attenuation;
+	#endif
 	return light;
 }
 
@@ -315,6 +320,7 @@ FragmentOutput MyFragmentProgram (Interpolators i) {
 		output.gBuffer1.rgb = specularTint;
 		output.gBuffer1.a = GetSmoothness(i);
 		output.gBuffer2 = float4(i.normal * 0.5 + 0.5, 1);
+		output.gBuffer3 = color;
 	#else
 		output.color = color;
 	#endif
