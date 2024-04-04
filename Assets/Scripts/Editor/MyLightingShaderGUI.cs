@@ -106,6 +106,9 @@ public class MyLightingShaderGUI : ShaderGUI {
 				m.SetInt("_ZWrite", settings.zWrite ? 1 : 0);
 			}
 		}
+		if (mode == RenderingMode.Fade || mode == RenderingMode.Transparent) {
+			DoSemitransparentShadows();
+		}
 	}
 
 	void DoMain () {
@@ -249,6 +252,21 @@ public class MyLightingShaderGUI : ShaderGUI {
 		);
 		if (EditorGUI.EndChangeCheck() && tex != map.textureValue) {
 			SetKeyword("_DETAIL_NORMAL_MAP", map.textureValue);
+		}
+	}
+
+	void DoSemitransparentShadows () {
+		EditorGUI.BeginChangeCheck();
+		bool semitransparentShadows =
+			EditorGUILayout.Toggle(
+				MakeLabel("Semitransp. Shadows", "Semitransparent Shadows"),
+				IsKeywordEnabled("_SEMITRANSPARENT_SHADOWS")
+			);
+		if (EditorGUI.EndChangeCheck()) {
+			SetKeyword("_SEMITRANSPARENT_SHADOWS", semitransparentShadows);
+		}
+		if (!semitransparentShadows) {
+			shouldShowAlphaCutoff = true;
 		}
 	}
 
