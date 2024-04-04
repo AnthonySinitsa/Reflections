@@ -17,6 +17,7 @@ float4 _Tint;
 sampler2D _MainTex;
 float4 _MainTex_ST;
 float _AlphaCutoff;
+sampler3D _DitherMaskLOD;
 
 struct VertexData {
 	float4 position : POSITION;
@@ -78,6 +79,13 @@ float GetAlpha (Interpolators i) {
 		#if defined(_RENDERING_CUTOUT)
 			clip(alpha - _AlphaCutoff);
 		#endif
+
+		#if SHADOWS_SEMITRANSPARENT
+			float dither = 
+				tex3D(_DitherMaskLOD, float3(i.vpos.xy * 0.01, 0.0625)).a;
+			clip(dither - 0.01);
+		#endif
+
 		#if defined(SHADOWS_CUBE)
 			float depth = length(i.lightVec) + unity_LightShadowBias.x;
 			depth *= _LightPositionRange.w;
