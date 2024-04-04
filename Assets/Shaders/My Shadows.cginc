@@ -24,8 +24,23 @@ struct VertexData {
 	float2 uv : TEXCOORD0;
 };
 
-struct Interpolators {
+struct InterpolatorsVertex {
 	float4 position : SV_POSITION;
+	#if SHADOWS_NEED_UV
+		float2 uv : TEXCOORD0;
+	#endif
+	#if defined(SHADOWS_CUBE)
+		float3 lightVec : TEXCOORD1;
+	#endif
+};
+
+struct Interpolators {
+	#if SHADOWS_SEMITRANSPARENT
+		UNITY_VPOS_TYPE vpos : VPOS;
+	#else
+		float4 positions : SV_POSITION;
+	#endif
+	
 	#if SHADOWS_NEED_UV
 		float2 uv : TEXCOORD0;
 	#endif
@@ -42,8 +57,8 @@ float GetAlpha (Interpolators i) {
 	return alpha;
 }
 
-	Interpolators MyShadowVertexProgram (VertexData v) {
-		Interpolators i;
+	InterpolatorsVertex MyShadowVertexProgram (VertexData v) {
+		InterpolatorsVertex i;
 		#if defined(SHADOWS_CUBE)
 			i.position = UnityObjectToClipPos(v.position);
 			i.lightVec =
