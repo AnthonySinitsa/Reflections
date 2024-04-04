@@ -268,6 +268,9 @@ void InitializeFragmentNormal(inout Interpolators i) {
 }
 
 float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
+	float alpha = GetAlpha(i);
+	clip(alpha - 0.5);
+
 	InitializeFragmentNormal(i);
 
 	float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
