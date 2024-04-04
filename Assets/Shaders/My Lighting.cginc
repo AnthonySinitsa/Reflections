@@ -315,6 +315,9 @@ FragmentOutput MyFragmentProgram (Interpolators i) {
 	#endif
 	FragmentOutput output;
 	#if defined(DEFERRED_PASS)
+		#if !defined(UNITY_HDR_ON)
+			color.rgb = exp2(-color.rgb);
+		#endif
 		output.gBuffer0.rgb = albedo;
 		output.gBuffer0.a = GetOcclusion(i);
 		output.gBuffer1.rgb = specularTint;
