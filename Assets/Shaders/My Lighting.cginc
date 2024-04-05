@@ -175,7 +175,11 @@ float4 ApplyFog (float4 color, Interpolators i) {
 			viewDistance = UNITY_Z_0_FAR_FROM_CLIPSPACE(i.worldPos.w);
 		#endif
 		UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
-		color.rgb = lerp(unity_FogColor.rgb, color.rgb, saturate(unityFogFactor));
+		float3 fogColor = 0;
+		#if defined(FORWARD_BASE_PASS)
+			fogColor = unity_FogColor.rgb;
+		#endif
+		color.rgb = lerp(fogColor, color.rgb, saturate(unityFogFactor));
 	#endif
 	return color;
 }
