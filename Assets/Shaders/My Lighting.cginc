@@ -5,7 +5,9 @@
 #include "AutoLight.cginc"
 
 #if defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2)
-	#define FOG_DEPTH 1
+	#if !defined(FOG_DISTANCE)
+		#define FOG_DEPTH 1
+	#endif
 #endif
 
 float4 _Tint;
