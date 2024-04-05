@@ -157,6 +157,13 @@ float3 CreateBinormal (float3 normal, float3 tangent, float binormalSign) {
 		(binormalSign * unity_WorldTransformParams.w);
 }
 
+float4 ApplyFog (float4 color, Interpolators i) {
+	float viewDistance = length(_WorldSpaceCameraPos - i.worldPos);
+	UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
+	color.rgb = lerp(unity_FogColor.rgb, color.rgb, saturate(unityFogFactor));
+	return color;
+}
+
 Interpolators MyVertexProgram (VertexData v) {
 	Interpolators i;
 	i.pos = UnityObjectToClipPos(v.vertex);
@@ -328,7 +335,7 @@ FragmentOutput MyFragmentProgram (Interpolators i) {
 		output.gBuffer2 = float4(i.normal * 0.5 + 0.5, 1);
 		output.gBuffer3 = color;
 	#else
-		output.color = color;
+		output.color = ApplyFog(color, i);
 	#endif
 	return output;
 }
