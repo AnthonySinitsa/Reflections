@@ -19,7 +19,7 @@ Shader "Custom/Deferred Fog" {
 
 			#include "UnityCG.cginc"
 
-			sampler2D _MainTex;
+			sampler2D _MainTex, _CameraDepthTexture;
 
 			struct VertexData {
 				float4 vertex : POSITION;
@@ -39,8 +39,18 @@ Shader "Custom/Deferred Fog" {
 			}
 
 			float4 FragmentProgram (Interpolators i) : SV_Target {
+        float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
+        depth = Linear01Depth(depth);
+
+        float viewDistance = depth * _ProjectionParams.z;
+
+        UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
+				unityFogFactor = saturate(unityFogFactor);
+
 				float3 sourceColor = tex2D(_MainTex, i.uv).rgb;
-				return float4(sourceColor, 1);
+        float3 foggedColor =
+          lerp(unity_FogColor.rgb, sourceColor, unityFogFactor);
+				return float4(foggedColor, 1);
 			}
 
 			ENDCG
