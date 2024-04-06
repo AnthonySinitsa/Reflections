@@ -42,7 +42,8 @@ Shader "Custom/Deferred Fog" {
         float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
         depth = Linear01Depth(depth);
 
-        float viewDistance = depth * _ProjectionParams.z;
+        float viewDistance = 
+          depth * _ProjectionParams.z - _ProjectionParams.y;
 
         UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
 				unityFogFactor = saturate(unityFogFactor);
