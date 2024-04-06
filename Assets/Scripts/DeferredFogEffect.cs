@@ -9,10 +9,10 @@ public class DeferredFogEffect : MonoBehaviour {
     [NonSerialized]
     Material fogMaterial;
 
-    [NonSerializable]
+    [NonSerialized]
     Camera deferredCamera;
 
-    [NonSerializable]
+    [NonSerialized]
     Vector3[] frustumCorners;
 
     [NonSerialized]
