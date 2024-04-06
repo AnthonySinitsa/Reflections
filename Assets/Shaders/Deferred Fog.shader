@@ -61,6 +61,9 @@ Shader "Custom/Deferred Fog" {
 
         UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
 				unityFogFactor = saturate(unityFogFactor);
+        if (depth > 0.9999) {
+					unityFogFactor = 1;
+				}
 
 				float3 sourceColor = tex2D(_MainTex, i.uv).rgb;
         float3 foggedColor =
