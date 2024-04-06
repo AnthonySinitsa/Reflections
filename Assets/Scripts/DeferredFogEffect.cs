@@ -1,9 +1,18 @@
 using UnityEngine;
+using System;
 
 [ExecuteInEditMode]
 public class DeferredFogEffect : MonoBehaviour {
 
+    public Shader deferredFog;
+
+    [NonSerialized]
+    Material fogMaterial;
+
     void OnRenderImage (RenderTexture source, RenderTexture destination) {
-        Graphics.Blit (source, destination);
+        if (fogMaterial == null) {
+			fogMaterial = new Material(deferredFog);
+		}
+        Graphics.Blit (source, destination, fogMaterial);
 	}
 }

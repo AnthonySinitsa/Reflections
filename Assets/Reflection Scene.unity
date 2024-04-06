@@ -7928,6 +7928,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdb7e282b79f9b34c9a972ca8c5f8d27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  deferredFog: {fileID: 4800000, guid: a6107667061f2a44abe68118df2b26d8, type: 3}
 --- !u!1 &1934186924
 GameObject:
   m_ObjectHideFlags: 0
