@@ -18,6 +18,8 @@ float4x4 unity_WorldToLight;
 
 float4 _LightColor, _LightDir, _LightPos;
 
+float _LightAsQuad;
+
 struct VertexData {
 	float4 vertex : POSITION;
 	float3 normal : NORMAL;
@@ -68,7 +70,11 @@ Interpolators VertexProgram (VertexData v) {
 	Interpolators i;
 	i.pos = UnityObjectToClipPos(v.vertex);
 	i.uv = ComputeScreenPos(i.pos);
-	i.ray = v.normal;
+	i.ray = lerp(
+		UnityObjectToViewPos(v.vertex) * float3(-1, -1, 1),
+		v.normal,
+		_LightAsQuad
+	);
 	return i;
 }
 
