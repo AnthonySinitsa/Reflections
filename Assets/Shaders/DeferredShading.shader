@@ -9,6 +9,13 @@ Shader "Custom/DeferredShading" {
 			Cull Off
 			ZTest Always
 			ZWrite Off
+
+      Stencil {
+				Ref [_StencilNonBackground]
+				ReadMask [_StencilNonBackground]
+				CompBack Equal
+				CompFront Equal
+			}
 			
 			CGPROGRAM
 
@@ -45,6 +52,13 @@ Shader "Custom/DeferredShading" {
 			Cull Off
 			ZTest Always
 			ZWrite Off
+
+      Stencil {
+				Ref [_StencilNonBackground]
+				ReadMask [_StencilNonBackground]
+				CompBack Equal
+				CompFront Equal
+			}
 			
 			CGPROGRAM
 
