@@ -63,12 +63,14 @@
 			Interpolators VertexProgram (VertexData v) {
 				Interpolators i;
 				i.pos = UnityObjectToClipPos(v.vertex);
-				i.uv = v.uv;
+				i.uv = ComputeScreenPos(i.pos)
 				return i;
 			}
 
 			float4 FragmentProgram (Interpolators i) : SV_Target {
-				return -log2(tex2D(_LightBuffer, i.uv));
+        float2 uv = i.uv.xy / i.uv.w;
+
+        return 0;
 			}
 
 			ENDCG

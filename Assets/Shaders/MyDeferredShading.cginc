@@ -35,8 +35,8 @@ struct VertexData {
 
 struct Interpolators {
 	float4 pos : SV_POSITION;
-    float4 uv : TEXCOORD0;
-    float3 ray : TEXCOORD1;
+  float4 uv : TEXCOORD0;
+  float3 ray : TEXCOORD1;
 };
 
 UnityLight CreateLight (float2 uv, float3 worldPos, float viewZ) {
