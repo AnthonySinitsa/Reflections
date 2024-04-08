@@ -53,6 +53,11 @@ UnityLight CreateLight (float2 uv, float3 worldPos, float viewZ) {
 	#else
 		float3 lightVec = _LightPos.xyz - worldPos;
 		light.dir = normalize(lightVec);
+
+		float4 uvCookie = mul(unity_WorldToLight, float4(worldPos, 1));
+		uvCookie.xy /= uvCookie.w;
+		attenuation *= tex2Dbias(_LightTexture0, float4(uvCookie.xy, 0, -8)).w;
+		attenuation *= uvCookie.w < 0;
 	#endif
 
 	if (shadowed) {
