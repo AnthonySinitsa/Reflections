@@ -9,7 +9,7 @@ sampler2D _CameraGBufferTexture0;
 sampler2D _CameraGBufferTexture1;
 sampler2D _CameraGBufferTexture2;
 
-sampler2D _LightTexture0;
+sampler2D _LightTexture0, _LightTextureB0;
 float4x4 unity_WorldToLight;
 
 #if defined (SHADOWS_SCREEN)
@@ -53,6 +53,11 @@ UnityLight CreateLight (float2 uv, float3 worldPos, float viewZ) {
 	#else
 		float3 lightVec = _LightPos.xyz - worldPos;
 		light.dir = normalize(lightVec);
+
+		attenuation *= tex2D(
+			_LightTextureB0,
+			(dot(lightVec, lightVec) * _LightPos.w).rr
+		).UNITY_ATTEN_CHANNEL;
 
 		float4 uvCookie = mul(unity_WorldToLight, float4(worldPos, 1));
 		uvCookie.xy /= uvCookie.w;
