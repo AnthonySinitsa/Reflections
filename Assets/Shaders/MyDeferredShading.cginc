@@ -48,7 +48,6 @@ UnityLight CreateLight (float2 uv, float3 worldPos, float viewZ) {
 		#if defined(SHADOWS_SCREEN)
 			shadowed = true;
 			shadowAttenuation = tex2D(_ShadowMapTexture, uv).r;
-
 		#endif
 	#else
 		float3 lightVec = _LightPos.xyz - worldPos;
@@ -118,10 +117,10 @@ float4 FragmentProgram (Interpolators i) : SV_Target {
 	indirectLight.specular = 0;
 
 	float4 color = UNITY_BRDF_PBS(
-    	albedo, specularTint, oneMinusReflectivity, smoothness,
-    	normal, viewDir, light, indirectLight
-    );
-    #if !defined(UNITY_HDR_ON)
+		albedo, specularTint, oneMinusReflectivity, smoothness,
+		normal, viewDir, light, indirectLight
+	);
+	#if !defined(UNITY_HDR_ON)
 		color = exp2(-color);
 	#endif
 	return color;
