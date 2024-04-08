@@ -62,17 +62,6 @@ struct Interpolators {
 	#endif
 };
 
-struct FragmentOutput {
-	#if defined(DEFERRED_PASS)
-		float4 gBuffer0 : SV_Target0;
-		float4 gBuffer1 : SV_Target1;
-		float4 gBuffer2 : SV_Target2;
-		float4 gBuffer3 : SV_Target3;
-	#else
-		float4 color : SV_Target;
-	#endif
-};
-
 float GetDetailMask (Interpolators i) {
 	#if defined (_DETAIL_MASK)
 		return tex2D(_DetailMask, i.uv.xy).a;
@@ -158,7 +147,7 @@ void ComputeVertexLightColor (inout Interpolators i) {
 			unity_4LightPosX0, unity_4LightPosY0, unity_4LightPosZ0,
 			unity_LightColor[0].rgb, unity_LightColor[1].rgb,
 			unity_LightColor[2].rgb, unity_LightColor[3].rgb,
-			unity_4LightAtten0, i.worldPos, i.normal
+			unity_4LightAtten0, i.worldPos.xyz, i.normal
 		);
 	#endif
 }
@@ -168,26 +157,10 @@ float3 CreateBinormal (float3 normal, float3 tangent, float binormalSign) {
 		(binormalSign * unity_WorldTransformParams.w);
 }
 
-float4 ApplyFog (float4 color, Interpolators i) {
-	#if FOG_ON
-		float viewDistance = length(_WorldSpaceCameraPos - i.worldPos);
-		#if FOG_DEPTH
-			viewDistance = UNITY_Z_0_FAR_FROM_CLIPSPACE(i.worldPos.w);
-		#endif
-		UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
-		float3 fogColor = 0;
-		#if defined(FORWARD_BASE_PASS)
-			fogColor = unity_FogColor.rgb;
-		#endif
-		color.rgb = lerp(fogColor, color.rgb, saturate(unityFogFactor));
-	#endif
-	return color;
-}
-
 Interpolators MyVertexProgram (VertexData v) {
 	Interpolators i;
 	i.pos = UnityObjectToClipPos(v.vertex);
-	i.worldPos = mul(unity_ObjectToWorld, v.vertex);
+	i.worldPos.xyz = mul(unity_ObjectToWorld, v.vertex);
 	#if FOG_DEPTH
 		i.worldPos.w = i.pos.z;
 	#endif
@@ -216,14 +189,13 @@ UnityLight CreateLight (Interpolators i) {
 		light.dir = float3(0, 1, 0);
 		light.color = 0;
 	#else
-
 		#if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
-			light.dir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos);
+			light.dir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos.xyz);
 		#else
 			light.dir = _WorldSpaceLightPos0.xyz;
 		#endif
 
-		UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
+		UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos.xyz);
 		
 		light.color = _LightColor0.rgb * attenuation;
 	#endif
@@ -261,7 +233,7 @@ UnityIndirect CreateIndirectLight (Interpolators i, float3 viewDir) {
 		Unity_GlossyEnvironmentData envData;
 		envData.roughness = 1 - GetSmoothness(i);
 		envData.reflUVW = BoxProjection(
-			reflectionDir, i.worldPos,
+			reflectionDir, i.worldPos.xyz,
 			unity_SpecCube0_ProbePosition,
 			unity_SpecCube0_BoxMin, unity_SpecCube0_BoxMax
 		);
@@ -269,7 +241,7 @@ UnityIndirect CreateIndirectLight (Interpolators i, float3 viewDir) {
 			UNITY_PASS_TEXCUBE(unity_SpecCube0), unity_SpecCube0_HDR, envData
 		);
 		envData.reflUVW = BoxProjection(
-			reflectionDir, i.worldPos,
+			reflectionDir, i.worldPos.xyz,
 			unity_SpecCube1_ProbePosition,
 			unity_SpecCube1_BoxMin, unity_SpecCube1_BoxMax
 		);
@@ -293,6 +265,7 @@ UnityIndirect CreateIndirectLight (Interpolators i, float3 viewDir) {
 		float occlusion = GetOcclusion(i);
 		indirectLight.diffuse *= occlusion;
 		indirectLight.specular *= occlusion;
+
 		#if defined(DEFERRED_PASS) && UNITY_ENABLE_REFLECTION_BUFFERS
 			indirectLight.specular = 0;
 		#endif
@@ -316,6 +289,33 @@ void InitializeFragmentNormal(inout Interpolators i) {
 	);
 }
 
+float4 ApplyFog (float4 color, Interpolators i) {
+	#if FOG_ON
+		float viewDistance = length(_WorldSpaceCameraPos - i.worldPos.xyz);
+		#if FOG_DEPTH
+			viewDistance = UNITY_Z_0_FAR_FROM_CLIPSPACE(i.worldPos.w);
+		#endif
+		UNITY_CALC_FOG_FACTOR_RAW(viewDistance);
+		float3 fogColor = 0;
+		#if defined(FORWARD_BASE_PASS)
+			fogColor = unity_FogColor.rgb;
+		#endif
+		color.rgb = lerp(fogColor, color.rgb, saturate(unityFogFactor));
+	#endif
+	return color;
+}
+
+struct FragmentOutput {
+	#if defined(DEFERRED_PASS)
+		float4 gBuffer0 : SV_Target0;
+		float4 gBuffer1 : SV_Target1;
+		float4 gBuffer2 : SV_Target2;
+		float4 gBuffer3 : SV_Target3;
+	#else
+		float4 color : SV_Target;
+	#endif
+};
+
 FragmentOutput MyFragmentProgram (Interpolators i) {
 	float alpha = GetAlpha(i);
 	#if defined(_RENDERING_CUTOUT)
@@ -324,7 +324,7 @@ FragmentOutput MyFragmentProgram (Interpolators i) {
 
 	InitializeFragmentNormal(i);
 
-	float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
+	float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos.xyz);
 
 	float3 specularTint;
 	float oneMinusReflectivity;
@@ -346,6 +346,7 @@ FragmentOutput MyFragmentProgram (Interpolators i) {
 	#if defined(_RENDERING_FADE) || defined(_RENDERING_TRANSPARENT)
 		color.a = alpha;
 	#endif
+
 	FragmentOutput output;
 	#if defined(DEFERRED_PASS)
 		#if !defined(UNITY_HDR_ON)
