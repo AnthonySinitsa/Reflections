@@ -7,8 +7,6 @@
 
 		Pass {
 			Blend [_SrcBlend] [_DstBlend]
-			Cull Off
-			ZTest Always
 			ZWrite Off
 
 			CGPROGRAM
