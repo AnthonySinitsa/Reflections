@@ -106,28 +106,6 @@
 
 		Pass {
 			Tags {
-				"LightMode" = "ShadowCaster"
-			}
-
-			CGPROGRAM
-
-			#pragma target 3.0
-
-			#pragma shader_feature _ _RENDERING_CUTOUT _RENDERING_FADE _RENDERING_TRANSPARENT
-			#pragma shader_feature _SMOOTHNESS_ALBEDO
-			#pragma shader_feature _SEMITRANSPARENT_SHADOWS
-
-			#pragma multi_compile_shadowcaster
-
-			#pragma vertex MyShadowVertexProgram
-			#pragma fragment MyShadowFragmentProgram
-
-			#include "My Shadows.cginc"
-
-			ENDCG
-		}
-		Pass {
-			Tags {
 				"LightMode" = "Deferred"
 			}
 
@@ -154,6 +132,29 @@
 			#define DEFERRED_PASS
 
 			#include "My Lighting.cginc"
+
+			ENDCG
+		}
+
+		Pass {
+			Tags {
+				"LightMode" = "ShadowCaster"
+			}
+
+			CGPROGRAM
+
+			#pragma target 3.0
+
+			#pragma shader_feature _ _RENDERING_CUTOUT _RENDERING_FADE _RENDERING_TRANSPARENT
+			#pragma shader_feature _SEMITRANSPARENT_SHADOWS
+			#pragma shader_feature _SMOOTHNESS_ALBEDO
+
+			#pragma multi_compile_shadowcaster
+
+			#pragma vertex MyShadowVertexProgram
+			#pragma fragment MyShadowFragmentProgram
+
+			#include "My Shadows.cginc"
 
 			ENDCG
 		}
