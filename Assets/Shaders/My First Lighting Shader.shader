@@ -22,7 +22,7 @@
 		[NoScaleOffset] _DetailNormalMap ("Detail Normals", 2D) = "bump" {}
 		_DetailBumpScale ("Detail Bump Scale", Float) = 1
 
-		_AlphaCutoff ("Alpha Cutoff", Range(0, 1)) = 0.5
+		_Cutoff ("Alpha Cutoff", Range(0, 1)) = 0.5
 
 		[HideInInspector] _SrcBlend ("_SrcBlend", Float) = 1
 		[HideInInspector] _DstBlend ("_DstBlend", Float) = 0

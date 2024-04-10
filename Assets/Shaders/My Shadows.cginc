@@ -20,7 +20,7 @@
 float4 _Color;
 sampler2D _MainTex;
 float4 _MainTex_ST;
-float _AlphaCutoff;
+float _Cutoff;
 
 sampler3D _DitherMaskLOD;
 
@@ -83,7 +83,7 @@ InterpolatorsVertex MyShadowVertexProgram (VertexData v) {
 float4 MyShadowFragmentProgram (Interpolators i) : SV_TARGET {
 	float alpha = GetAlpha(i);
 	#if defined(_RENDERING_CUTOUT)
-		clip(alpha - _AlphaCutoff);
+		clip(alpha - _Cutoff);
 	#endif
 
 	#if SHADOWS_SEMITRANSPARENT
