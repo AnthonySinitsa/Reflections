@@ -25,6 +25,17 @@ struct Interpolators {
 	float4 uv : TEXCOORD0;
 };
 
+Interpolators MyLightmappingVertexProgram (VertexData v) {
+	Interpolators i;
+  v.vertex.xy = v.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
+	v.vertex.z = v.vertex.z > 0 ? 0.0001 : 0;
+  i.pos = UnityObjectToClipPos(v.vertex);
+
+	i.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
+	i.uv.zw = TRANSFORM_TEX(v.uv, _DetailTex);
+	return i;
+}
+
 float GetDetailMask (Interpolators i) {
 	#if defined (_DETAIL_MASK)
 		return tex2D(_DetailMask, i.uv.xy).a;
