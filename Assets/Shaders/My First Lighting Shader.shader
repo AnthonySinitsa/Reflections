@@ -1,7 +1,7 @@
 ﻿Shader "Custom/My First Lighting Shader" {
 
 	Properties {
-		_Tint ("Tint", Color) = (1, 1, 1, 1)
+		_Color ("Tint", Color) = (1, 1, 1, 1)
 		_MainTex ("Albedo", 2D) = "white" {}
 
 		[NoScaleOffset] _NormalMap ("Normals", 2D) = "bump" {}
