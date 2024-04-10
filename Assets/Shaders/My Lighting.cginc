@@ -28,7 +28,7 @@ float _OcclusionStrength;
 sampler2D _EmissionMap;
 float3 _Emission;
 
-float _Cutoff
+float _Cutoff;
 
 struct VertexData {
 	float4 vertex : POSITION;
