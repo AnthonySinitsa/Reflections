@@ -28,6 +28,7 @@ float _OcclusionStrength;
 sampler2D _EmissionMap;
 float3 _Emission;
 
+//float _AlphaCutoff;
 float _Cutoff;
 
 struct VertexData {
