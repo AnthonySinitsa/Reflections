@@ -146,6 +146,18 @@ float3 GetEmission (Interpolators i) {
 	#endif
 }
 
+float FadeShadows (Interpolators i, float attenuation) {
+	#if HANDLE_SHADOWS_BLEDNING_IN_GI
+		float viewZ =
+			dot(_WorldSpaceCameraPos - i.worldPos, UNITY_MATRIX_V[2].xyz);
+		float shadowFadeDistance =
+			UnityComputeShadowFadeDistance(i.worldPos, viewZ);
+		float shadowFade = UnityComputeShadowFade(shadowFadeDistance);
+		attenuation = saturate(attenuation + shadowFade);
+	#endif
+	return attenuation;
+}
+
 void ComputeVertexLightColor (inout Interpolators i) {
 	#if defined(VERTEXLIGHT_ON)
 		i.vertexLightColor = Shade4PointLights(
@@ -193,6 +205,7 @@ Interpolators MyVertexProgram (VertexData v) {
 	return i;
 }
 
+// MARK: CreateLight
 UnityLight CreateLight (Interpolators i) {
 	UnityLight light;
 
@@ -207,6 +220,7 @@ UnityLight CreateLight (Interpolators i) {
 		#endif
 
 		UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos.xyz);
+		attenuation = FadeShadows(i, attenuation);
 		
 		light.color = _LightColor0.rgb * attenuation;
 	#endif
