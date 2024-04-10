@@ -238,11 +238,10 @@ UnityIndirect CreateIndirectLight (Interpolators i, float3 viewDir) {
 
 	#if defined(FORWARD_BASE_PASS) || defined(DEFERRED_PASS)
 		#if defined(LIGHTMAP_ON)
-			indirectLight.diffuse = 0;
+			indirectLight.diffuse =
+				DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lightmapUV));
 		#else
-			indirectLight.diffuse = DecodeLightmap(
-				UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lightmapUV)
-			);
+			indirectLight.diffuse += max(0, ShadeSH9(float4(i.normal, 1)));
 		#endif
 		float3 reflectionDir = reflect(-viewDir, i.normal);
 		Unity_GlossyEnvironmentData envData;
