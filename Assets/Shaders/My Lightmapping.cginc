@@ -2,6 +2,7 @@
 #define MY_LIGHTMAPPING_INCLUDED
 
 #include "UnityPBSLighting.cginc"
+#include "UnityMetaPass.cginc"
 
 float4 _Color;
 sampler2D _MainTex, _DetailTex, _DetailMask;
@@ -34,6 +35,17 @@ Interpolators MyLightmappingVertexProgram (VertexData v) {
 	i.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
 	i.uv.zw = TRANSFORM_TEX(v.uv, _DetailTex);
 	return i;
+}
+
+float4 MyLightmappingFragmentProgram (Interpolators i) : SV_TARGET {
+	UnityMetaInput surfaceData;
+	surfaceData.Emission = GetEmission(i);
+	float oneMinusReflectivity;
+	surfaceData.Albedo = DiffuseAndSpecularFromMetallic(
+		GetAlbedo(i), GetMetallic(i),
+		surfaceData.SpecularColor, oneMinusReflectivity
+	);
+	return UnityMetaFragment(surfaceData);
 }
 
 float GetDetailMask (Interpolators i) {
