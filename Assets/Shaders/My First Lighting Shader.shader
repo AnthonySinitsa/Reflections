@@ -60,7 +60,7 @@
 			#pragma shader_feature _DETAIL_NORMAL_MAP
 
 			#pragma multi_compile _ SHADOWS_SCREEN
-			#pragma multi_compile _ VERTEXLIGHT_ON
+			#pragma multi_compile _ LIGHTMAP_ON VERTEXLIGHT_ON
 			#pragma multi_compile_fog
 
 			#pragma vertex MyVertexProgram
@@ -125,6 +125,7 @@
 			#pragma shader_feature _DETAIL_NORMAL_MAP
 
 			#pragma multi_compile _ UNITY_HDR_ON
+			#pragma multi_compile _ LIGHTMAP_ON
 
 			#pragma vertex MyVertexProgram
 			#pragma fragment MyFragmentProgram
