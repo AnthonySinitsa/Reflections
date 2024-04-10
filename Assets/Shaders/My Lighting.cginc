@@ -35,6 +35,7 @@ struct VertexData {
 	float3 normal : NORMAL;
 	float4 tangent : TANGENT;
 	float2 uv : TEXCOORD0;
+	float2 uv1 : TEXCOORD1;
 };
 
 struct Interpolators {
@@ -59,6 +60,10 @@ struct Interpolators {
 
 	#if defined(VERTEXLIGHT_ON)
 		float3 vertexLightColor : TEXCOORD6;
+	#endif
+
+	#if defined(LIGHTMAP_ON)
+		float2 lightmapUV : TEXCOORD6;
 	#endif
 };
 
@@ -175,6 +180,10 @@ Interpolators MyVertexProgram (VertexData v) {
 
 	i.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
 	i.uv.zw = TRANSFORM_TEX(v.uv, _DetailTex);
+
+	#if defined(LIGHTMAP_ON)
+		i.lightmapUV = v.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
+	#endif
 
 	TRANSFER_SHADOW(i);
 
