@@ -1,12 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EmissiveOscillator : MonoBehaviour {
 
-  MeshRenderer emissiveRenderer;
+	MeshRenderer emissiveRenderer;
 	Material emissiveMaterial;
 
 	void Start () {
-    emissiveRenderer = GetComponent<MeshRenderer>();
+		emissiveRenderer = GetComponent<MeshRenderer>();
 		emissiveMaterial = emissiveRenderer.material;
 	}
 	
@@ -16,6 +16,7 @@ public class EmissiveOscillator : MonoBehaviour {
 			Mathf.Sin(Time.time * Mathf.PI) * 0.5f + 0.5f
 		);
 		emissiveMaterial.SetColor("_Emission", c);
-    DynamicGI.SetEmissive(emissiveRenderer, c);
+//		emissiveRenderer.UpdateGIMaterials();
+		DynamicGI.SetEmissive(emissiveRenderer, c);
 	}
 }

@@ -72,6 +72,10 @@ float3 GetEmission (Interpolators i) {
 
 Interpolators MyLightmappingVertexProgram (VertexData v) {
 	Interpolators i;
+//	v.vertex.xy = v.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
+//	v.vertex.z = v.vertex.z > 0 ? 0.0001 : 0;
+//
+//    i.pos = UnityObjectToClipPos(v.vertex);
 	i.pos = UnityMetaVertexPosition(
 		v.vertex, v.uv1, v.uv2, unity_LightmapST, unity_DynamicLightmapST
 	);

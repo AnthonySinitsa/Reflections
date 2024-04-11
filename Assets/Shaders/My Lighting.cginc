@@ -179,7 +179,6 @@ float3 CreateBinormal (float3 normal, float3 tangent, float binormalSign) {
 		(binormalSign * unity_WorldTransformParams.w);
 }
 
-// MARK: MyVertexProgram
 Interpolators MyVertexProgram (VertexData v) {
 	Interpolators i;
 	UNITY_INITIALIZE_OUTPUT(Interpolators, i);
@@ -339,7 +338,7 @@ UnityIndirect CreateIndirectLight (Interpolators i, float3 viewDir) {
 		#if !defined(LIGHTMAP_ON) && !defined(DYNAMICLIGHTMAP_ON)
 			indirectLight.diffuse += max(0, ShadeSH9(float4(i.normal, 1)));
 		#endif
-		
+
 		float3 reflectionDir = reflect(-viewDir, i.normal);
 		Unity_GlossyEnvironmentData envData;
 		envData.roughness = 1 - GetSmoothness(i);
