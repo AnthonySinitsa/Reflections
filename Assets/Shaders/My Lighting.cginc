@@ -11,6 +11,12 @@
 	#define FOG_ON 1
 #endif
 
+#if !defined(LIGHTMAP_ON) && defined(SHADOWS_SCREEN)
+	#if defined(SHADOWS_SHADOWMASK) && !defined(UNITY_NO_SCREENSPACE_SHADOWS)
+		#define ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS 1
+	#endif
+#endif
+
 float4 _Color;
 sampler2D _MainTex, _DetailTex, _DetailMask;
 float4 _MainTex_ST, _DetailTex_ST;
@@ -62,7 +68,7 @@ struct Interpolators {
 		float3 vertexLightColor : TEXCOORD6;
 	#endif
 
-	#if defined(LIGHTMAP_ON)
+	#if defined(LIGHTMAP_ON) || ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
 		float2 lightmapUV : TEXCOORD6;
 	#endif
 };
@@ -147,7 +153,10 @@ float3 GetEmission (Interpolators i) {
 }
 
 float FadeShadows (Interpolators i, float attenuation) {
-	#if HANDLE_SHADOWS_BLEDNING_IN_GI
+	#if HANDLE_SHADOWS_BLEDNING_IN_GI || ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
+		#if ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
+			attenuation = SHADOW_ATTENUATION(i);
+		#endif
 		float viewZ =
 			dot(_WorldSpaceCameraPos - i.worldPos, UNITY_MATRIX_V[2].xyz);
 		float shadowFadeDistance =
@@ -199,7 +208,7 @@ Interpolators MyVertexProgram (VertexData v) {
 	i.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
 	i.uv.zw = TRANSFORM_TEX(v.uv, _DetailTex);
 
-	#if defined(LIGHTMAP_ON)
+	#if defined(LIGHTMAP_ON) || ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
 		i.lightmapUV = v.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
 	#endif
 
