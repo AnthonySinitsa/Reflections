@@ -158,25 +158,6 @@ float3 GetEmission (Interpolators i) {
 	#endif
 }
 
-float FadeShadows (Interpolators i, float attenuation) {
-	#if HANDLE_SHADOWS_BLEDNING_IN_GI || ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
-		#if ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
-			attenuation = SHADOW_ATTENUATION(i);
-		#endif
-		float viewZ =
-			dot(_WorldSpaceCameraPos - i.worldPos, UNITY_MATRIX_V[2].xyz);
-		float shadowFadeDistance =
-			UnityComputeShadowFadeDistance(i.worldPos, viewZ);
-		float shadowFade = UnityComputeShadowFade(shadowFadeDistance);
-		float bakedAttenuation =
-			UnitySampleBakedOcclusion(i.lightmapUV, i.worldPos);
-		attenuation = UnityMixRealtimeAndBakedShadows(
-			attenuation, bakedAttenuation, shadowFade
-		);
-	#endif
-	return attenuation;
-}
-
 void ComputeVertexLightColor (inout Interpolators i) {
 	#if defined(VERTEXLIGHT_ON)
 		i.vertexLightColor = Shade4PointLights(
@@ -193,7 +174,6 @@ float3 CreateBinormal (float3 normal, float3 tangent, float binormalSign) {
 		(binormalSign * unity_WorldTransformParams.w);
 }
 
-// MARK: MyVertexProgram
 Interpolators MyVertexProgram (VertexData v) {
 	Interpolators i;
 	UNITY_INITIALIZE_OUTPUT(Interpolators, i);
@@ -224,7 +204,27 @@ Interpolators MyVertexProgram (VertexData v) {
 	return i;
 }
 
-// MARK: CreateLight
+float FadeShadows (Interpolators i, float attenuation) {
+	#if HANDLE_SHADOWS_BLENDING_IN_GI || ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
+		// UNITY_LIGHT_ATTENUATION doesn't fade shadows for us.
+		#if ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
+			attenuation = SHADOW_ATTENUATION(i);
+		#endif
+		float viewZ =
+			dot(_WorldSpaceCameraPos - i.worldPos, UNITY_MATRIX_V[2].xyz);
+		float shadowFadeDistance =
+			UnityComputeShadowFadeDistance(i.worldPos, viewZ);
+		float shadowFade = UnityComputeShadowFade(shadowFadeDistance);
+		float bakedAttenuation =
+			UnitySampleBakedOcclusion(i.lightmapUV, i.worldPos);
+		attenuation = UnityMixRealtimeAndBakedShadows(
+			attenuation, bakedAttenuation, shadowFade
+		);
+	#endif
+
+	return attenuation;
+}
+
 UnityLight CreateLight (Interpolators i) {
 	UnityLight light;
 
@@ -240,9 +240,10 @@ UnityLight CreateLight (Interpolators i) {
 
 		UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos.xyz);
 		attenuation = FadeShadows(i, attenuation);
-		
+
 		light.color = _LightColor0.rgb * attenuation;
 	#endif
+
 	return light;
 }
 
@@ -260,6 +261,24 @@ float3 BoxProjection (
 		}
 	#endif
 	return direction;
+}
+
+void ApplySubtractiveLighting (
+	Interpolators i, inout UnityIndirect indirectLight
+) {
+	#if SUBTRACTIVE_LIGHTING
+		UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos.xyz);
+		attenuation = FadeShadows(i, attenuation);
+
+		float ndotl = saturate(dot(i.normal, _WorldSpaceLightPos0.xyz));
+		float3 shadowedLightEstimate =
+			ndotl * (1 - attenuation) * _LightColor0.rgb;
+		float3 subtractedLight = indirectLight.diffuse - shadowedLightEstimate;
+		subtractedLight = max(subtractedLight, unity_ShadowColor.rgb);
+		subtractedLight =
+			lerp(subtractedLight, indirectLight.diffuse, _LightShadowData.x);
+		indirectLight.diffuse = min(subtractedLight, indirectLight.diffuse);
+	#endif
 }
 
 UnityIndirect CreateIndirectLight (Interpolators i, float3 viewDir) {
@@ -284,6 +303,8 @@ UnityIndirect CreateIndirectLight (Interpolators i, float3 viewDir) {
 					indirectLight.diffuse, lightmapDirection, i.normal
 				);
 			#endif
+
+			ApplySubtractiveLighting(i, indirectLight);
 		#else
 			indirectLight.diffuse += max(0, ShadeSH9(float4(i.normal, 1)));
 		#endif
