@@ -354,6 +354,10 @@ struct FragmentOutput {
 		float4 gBuffer1 : SV_Target1;
 		float4 gBuffer2 : SV_Target2;
 		float4 gBuffer3 : SV_Target3;
+
+		#if defined(SHADOWS_SHADOWMASK) && (UNITY_ALLOWED_MRT_COUNT > 4)
+			float4 gBuffer4 : SV_Target4;
+		#endif
 	#else
 		float4 color : SV_Target;
 	#endif
@@ -401,6 +405,15 @@ FragmentOutput MyFragmentProgram (Interpolators i) {
 		output.gBuffer1.a = GetSmoothness(i);
 		output.gBuffer2 = float4(i.normal * 0.5 + 0.5, 1);
 		output.gBuffer3 = color;
+
+		#if defined(SHADOWS_SHADOWMASK) && (UNITY_ALLOWED_MRT_COUNT > 4)
+			float2 shadowUV = 0;
+			#if defined(LIGHTMAP_ON)
+				shadowUV = i.lightmapUV;
+			#endif
+			output.gBuffer4 =
+				UnityGetRawBakedOcclusions(shadowUV, i.worldPos.xyz);
+		#endif
 	#else
 		output.color = ApplyFog(color, i);
 	#endif
