@@ -59,6 +59,8 @@
 			#pragma shader_feature _DETAIL_ALBEDO_MAP
 			#pragma shader_feature _DETAIL_NORMAL_MAP
 
+			#pragma multi_compile _ LOD_FADE_CROSSFADE
+
 			#pragma multi_compile_fwdbase
 			#pragma multi_compile_fog
 
@@ -92,6 +94,8 @@
 			#pragma shader_feature _DETAIL_ALBEDO_MAP
 			#pragma shader_feature _DETAIL_NORMAL_MAP
 
+			#pragma multi_compile _ LOD_FADE_CROSSFADE
+
 			#pragma multi_compile_fwdadd_fullshadows
 			#pragma multi_compile_fog
 			
@@ -123,6 +127,8 @@
 			#pragma shader_feature _DETAIL_ALBEDO_MAP
 			#pragma shader_feature _DETAIL_NORMAL_MAP
 
+			#pragma multi_compile _ LOD_FADE_CROSSFADE
+
 			#pragma multi_compile_prepassfinal
 
 			#pragma vertex MyVertexProgram
@@ -147,6 +153,8 @@
 			#pragma shader_feature _ _RENDERING_CUTOUT _RENDERING_FADE _RENDERING_TRANSPARENT
 			#pragma shader_feature _SEMITRANSPARENT_SHADOWS
 			#pragma shader_feature _SMOOTHNESS_ALBEDO
+
+			#pragma multi_compile _ LOD_FADE_CROSSFADE
 
 			#pragma multi_compile_shadowcaster
 
