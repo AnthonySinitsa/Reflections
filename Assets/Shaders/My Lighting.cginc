@@ -17,6 +17,12 @@
 	#endif
 #endif
 
+#if defined(LIGHTMAP_ON) && defined(SHADOWS_SCREEN)
+	#if defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK)
+		#define SUBTRACTIVE_LIGHTING 1
+	#endif
+#endif
+
 float4 _Color;
 sampler2D _MainTex, _DetailTex, _DetailMask;
 float4 _MainTex_ST, _DetailTex_ST;
@@ -222,7 +228,7 @@ Interpolators MyVertexProgram (VertexData v) {
 UnityLight CreateLight (Interpolators i) {
 	UnityLight light;
 
-	#if defined(DEFERRED_PASS)
+	#if defined(DEFERRED_PASS) || SUBTRACTIVE_LIGHTING
 		light.dir = float3(0, 1, 0);
 		light.color = 0;
 	#else
