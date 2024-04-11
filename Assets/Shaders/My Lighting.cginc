@@ -153,7 +153,11 @@ float FadeShadows (Interpolators i, float attenuation) {
 		float shadowFadeDistance =
 			UnityComputeShadowFadeDistance(i.worldPos, viewZ);
 		float shadowFade = UnityComputeShadowFade(shadowFadeDistance);
-		attenuation = saturate(attenuation + shadowFade);
+		float bakedAttenuation =
+			UnitySampleBakedOcclusion(i.lightmapUV, i.worldPos);
+		attenuation = UnityMixRealtimeAndBakedShadows(
+			attenuation, bakedAttenuation, shadowFade
+		);
 	#endif
 	return attenuation;
 }
