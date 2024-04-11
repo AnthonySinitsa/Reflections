@@ -341,11 +341,10 @@ UnityIndirect CreateIndirectLight (Interpolators i, float3 viewDir) {
 					indirectLight.diffuse = SHEvalLinearL0L1_SampleProbeVolume(
 						float4(i.normal, 1), i.worldPos
 					);
-					indirectLight.diffuse = max(0, indirectLight.diffuse);
 					#if defined(UNITY_COLORSPACE_GAMMA)
-						indirectLight.diffuse =
-							LinearToGammaSpace(indirectLight.diffuse);
-					#endif
+			            indirectLight.diffuse =
+			            	LinearToGammaSpace(indirectLight.diffuse);
+			        #endif
 				}
 				else {
 					indirectLight.diffuse +=
