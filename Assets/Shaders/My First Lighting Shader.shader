@@ -63,6 +63,7 @@
 
 			#pragma multi_compile_fwdbase
 			#pragma multi_compile_fog
+			#pragma multi_compile_instancing
 
 			#pragma vertex MyVertexProgram
 			#pragma fragment MyFragmentProgram
