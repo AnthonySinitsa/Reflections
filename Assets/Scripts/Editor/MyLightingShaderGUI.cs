@@ -267,12 +267,6 @@ public class MyLightingShaderGUI : ShaderGUI {
 		editor.TextureScaleOffsetProperty(detailTex);
 	}
 
-	void DoAdvanced () {
-		GUILayout.Label("Advanced Options", EditorStyles.boldLabel);
-
-		editor.EnableInstancingField();
-	}
-
 	void DoSecondaryNormals () {
 		MaterialProperty map = FindProperty("_DetailNormalMap");
 		Texture tex = map.textureValue;
@@ -284,6 +278,12 @@ public class MyLightingShaderGUI : ShaderGUI {
 		if (EditorGUI.EndChangeCheck() && tex != map.textureValue) {
 			SetKeyword("_DETAIL_NORMAL_MAP", map.textureValue);
 		}
+	}
+
+	void DoAdvanced () {
+		GUILayout.Label("Advanced Options", EditorStyles.boldLabel);
+
+		editor.EnableInstancingField();
 	}
 
 	MaterialProperty FindProperty (string name) {

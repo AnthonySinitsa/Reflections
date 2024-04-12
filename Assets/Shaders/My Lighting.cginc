@@ -218,7 +218,6 @@ float3 CreateBinormal (float3 normal, float3 tangent, float binormalSign) {
 		(binormalSign * unity_WorldTransformParams.w);
 }
 
-// MARK: MyVertexProgram
 InterpolatorsVertex MyVertexProgram (VertexData v) {
 	InterpolatorsVertex i;
 	UNITY_INITIALIZE_OUTPUT(Interpolators, i);
