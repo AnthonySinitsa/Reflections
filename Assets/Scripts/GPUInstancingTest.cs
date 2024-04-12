@@ -9,13 +9,16 @@ public class GPUInstancingTest : MonoBehaviour {
 	public float radius = 50f;
 
 	void Start () {
+		MaterialPropertyBlock properties = new MaterialPropertyBlock();
 		for (int i = 0; i < instances; i++) {
 			Transform t = Instantiate(prefab);
 			t.localPosition = Random.insideUnitSphere * radius;
 			t.SetParent(transform);
 
-			t.GetComponent<MeshRenderer>().material.color =
-				new Color(Random.value, Random.value, Random.value);
+			properties.SetColor(
+				"_Color", new Color(Random.value, Random.value, Random.value)
+			);
+			t.GetComponent<MeshRenderer>().SetPropertyBlock(properties);
 		}
 	}
 }
