@@ -23,6 +23,7 @@ UNITY_INSTANCING_BUFFER_START(InstanceProperties)
 	UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
 #define _Color_arr InstanceProperties
 UNITY_INSTANCING_BUFFER_END(InstanceProperties)
+
 sampler2D _MainTex;
 float4 _MainTex_ST;
 float _Cutoff;
