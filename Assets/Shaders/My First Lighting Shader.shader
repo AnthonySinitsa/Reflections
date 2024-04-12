@@ -158,6 +158,7 @@
 			#pragma multi_compile _ LOD_FADE_CROSSFADE
 
 			#pragma multi_compile_shadowcaster
+			#pragma multi_compile_instancing
 
 			#pragma vertex MyShadowVertexProgram
 			#pragma fragment MyShadowFragmentProgram
