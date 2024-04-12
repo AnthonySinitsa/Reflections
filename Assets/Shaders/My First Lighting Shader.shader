@@ -131,6 +131,7 @@
 			#pragma multi_compile _ LOD_FADE_CROSSFADE
 
 			#pragma multi_compile_prepassfinal
+			#pragma multi_compile_instancing
 
 			#pragma vertex MyVertexProgram
 			#pragma fragment MyFragmentProgram
