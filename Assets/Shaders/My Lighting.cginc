@@ -43,6 +43,7 @@ float3 _Emission;
 float _Cutoff;
 
 struct VertexData {
+	UNITY_VERTEX_INPUT_INSTANCE_ID
 	float4 vertex : POSITION;
 	float3 normal : NORMAL;
 	float4 tangent : TANGENT;
@@ -217,9 +218,11 @@ float3 CreateBinormal (float3 normal, float3 tangent, float binormalSign) {
 		(binormalSign * unity_WorldTransformParams.w);
 }
 
+// MARK: MyVertexProgram
 InterpolatorsVertex MyVertexProgram (VertexData v) {
 	InterpolatorsVertex i;
 	UNITY_INITIALIZE_OUTPUT(Interpolators, i);
+	UNITY_SETUP_INSTANCE_ID(v);
 	i.pos = UnityObjectToClipPos(v.vertex);
 	i.worldPos.xyz = mul(unity_ObjectToWorld, v.vertex);
 	#if FOG_DEPTH
