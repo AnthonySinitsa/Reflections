@@ -457,6 +457,12 @@ void InitializeFragmentNormal(inout Interpolators i) {
 	);
 }
 
+void ApplyParallax (inout Interpolators i) {
+	#if defined(_PARALLAX_MAP)
+		i.uv.x += _ParallaxStrength;
+	#endif
+}
+
 float4 ApplyFog (float4 color, Interpolators i) {
 	#if FOG_ON
 		float viewDistance = length(_WorldSpaceCameraPos - i.worldPos.xyz);
@@ -492,6 +498,8 @@ FragmentOutput MyFragmentProgram (Interpolators i) {
 	#if defined(LOD_FADE_CROSSFADE)
 		UnityApplyDitherCrossFade(i.vpos);
 	#endif
+
+	ApplyParallax(i);
 
 	float alpha = GetAlpha(i);
 	#if defined(_RENDERING_CUTOUT)
