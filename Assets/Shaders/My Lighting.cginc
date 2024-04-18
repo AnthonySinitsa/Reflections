@@ -85,6 +85,10 @@ struct InterpolatorsVertex {
 	#if defined(DYNAMICLIGHTMAP_ON)
 		float2 dynamicLightmapUV : TEXCOORD7;
 	#endif
+
+	#if defined(_PARALLAX_MAP)
+		float3 tangentViewDir : TEXCOORD8;
+	#endif
 };
 
 struct Interpolators {
@@ -122,6 +126,10 @@ struct Interpolators {
 
 	#if defined(DYNAMICLIGHTMAP_ON)
 		float2 dynamicLightmapUV : TEXCOORD7;
+	#endif
+
+	#if defined(_PARALLAX_MAP)
+		float3 tangentViewDir : TEXCOORD8;
 	#endif
 };
 
@@ -252,6 +260,16 @@ InterpolatorsVertex MyVertexProgram (VertexData v) {
 	UNITY_TRANSFER_SHADOW(i, v.uv1);
 
 	ComputeVertexLightColor(i);
+
+	#if defined (_PARALLAX_MAP)
+		float3x3 objectToTangent = float3x3(
+			v.tangent.xyz,
+			cross(v.normal, v.tangent.xyz) * v.tangent.w,
+			v.normal
+		);
+		i.tangentViewDir = mul(objectToTangent, ObjSpaceViewDir(v.vertex));
+	#endif
+
 	return i;
 }
 
@@ -459,7 +477,8 @@ void InitializeFragmentNormal(inout Interpolators i) {
 
 void ApplyParallax (inout Interpolators i) {
 	#if defined(_PARALLAX_MAP)
-		i.uv.x += _ParallaxStrength;
+		i.tangentViewDir = normalize(i.tangentViewDir);
+		i.uv.xy += i.tangentViewDir.xy * _ParallaxStrength;
 	#endif
 }
 
