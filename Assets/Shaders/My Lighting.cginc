@@ -475,6 +475,22 @@ void InitializeFragmentNormal(inout Interpolators i) {
 	);
 }
 
+float GetParallaxHeight (float2 uv) {
+	return tex2D(_ParallaxMap, uv).g;
+}
+
+float2 ParallaxOffset (float2 uv, float2 viewDir) {
+	float height = GetParallaxHeight(uv);
+	height -= 0.5;
+	height *= _ParallaxStrength;
+	return viewDir * height;
+}
+	
+float2 ParallaxRaymarching (float2 uv, float2 viewDir) {
+	float2 uvOffset = 0;
+	return uvOffset;
+}
+
 void ApplyParallax (inout Interpolators i) {
 	#if defined(_PARALLAX_MAP)
 		i.tangentViewDir = normalize(i.tangentViewDir);
@@ -484,10 +500,11 @@ void ApplyParallax (inout Interpolators i) {
 			#endif
 			i.tangentViewDir.xy /= (i.tangentViewDir.z + PARALLAX_BIAS);
 		#endif
-		float height = tex2D(_ParallaxMap, i.uv.xy).g;
-		height -= 0.5;
-		height *= _ParallaxStrength;
-		float2 uvOffset = i.tangentViewDir.xy * height;
+		
+		#if !defined(PARALLAX_FUNCTION)
+			#define PARALLAX_FUNCTION ParallaxOffset
+		#endif
+		float2 uvOffset = PARALLAX_FUNCTION(i.uv.xy, i.tangentViewDir.xy);
 		i.uv.xy += uvOffset;
 		i.uv.zw += uvOffset * (_DetailTex_ST.xy / _MainTex_ST.xy);
 	#endif
