@@ -478,7 +478,12 @@ void InitializeFragmentNormal(inout Interpolators i) {
 void ApplyParallax (inout Interpolators i) {
 	#if defined(_PARALLAX_MAP)
 		i.tangentViewDir = normalize(i.tangentViewDir);
-		i.tangentViewDir.xy /= (i.tangentViewDir.z + 0.42);
+		#if !defined(PARALLAX_OFFSET_LIMITING)
+			#if !defined(PARALLAX_BIAS)
+				#define PARALLAX_BIAS 0.42
+			#endif
+			i.tangentViewDir.xy /= (i.tangentViewDir.z + PARALLAX_BIAS);
+		#endif
 		float height = tex2D(_ParallaxMap, i.uv.xy).g;
 		height -= 0.5;
 		height *= _ParallaxStrength;
